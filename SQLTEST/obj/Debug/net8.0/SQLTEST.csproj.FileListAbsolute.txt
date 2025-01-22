@@ -53,3 +53,4 @@
 \\kings.internal\Students$\2018\cprescod18\Downloads\Year 13C#\Year 13C#\SQLTEST\obj\Debug\net8.0\SQLTEST.pdb
 \\kings.internal\Students$\2018\cprescod18\Downloads\Year 13C#\Year 13C#\SQLTEST\obj\Debug\net8.0\SQLTEST.genruntimeconfig.cache
 \\kings.internal\Students$\2018\cprescod18\Downloads\Year 13C#\Year 13C#\SQLTEST\obj\Debug\net8.0\ref\SQLTEST.dll
+\\kings.internal\Students$\2018\cprescod18\Downloads\Year 13C#\Year 13C#\SQLTEST\obj\Debug\net8.0\SQLTEST.sourcelink.json

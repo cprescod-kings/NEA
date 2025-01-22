@@ -19,7 +19,7 @@ namespace sqltest
                 builder.DataSource = "KAB-SQL\\KABSQL22"; 
                 builder.UserID = "csharp";            
                 builder.Password = "BlueCat12";     
-                builder.InitialCatalog = "MusicStore";
+                builder.InitialCatalog = "CPRESCOD";
                 builder.TrustServerCertificate=true;
          
                 using SqlConnection connection = new SqlConnection(builder.ConnectionString);
@@ -28,13 +28,13 @@ namespace sqltest
                 
                 connection.Open();       
 
-                String sql = "SELECT AlbumId,Title,ArtistId FROM Album";
+                String sql = "SELECT ID, QuestionTitle FROM dbo.Questions";
 
                 using SqlCommand command = new SqlCommand(sql, connection);
                 
                 using SqlDataReader reader = command.ExecuteReader(); 
                     while (reader.Read()){
-                        Console.WriteLine("{0} {1} {2}", reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2));
+                        Console.WriteLine("{0} {1}", reader.GetInt32(0), reader.GetString(1));
                     }               
             }
             catch (SqlException e)

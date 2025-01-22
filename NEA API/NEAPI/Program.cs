@@ -6,17 +6,12 @@ SqlConnectionStringBuilder sqlBuilder = new SqlConnectionStringBuilder();
     sqlBuilder.DataSource = "KAB-SQL\\KABSQL22"; 
     sqlBuilder.UserID = "csharp";            
     sqlBuilder.Password = "BlueCat12";     
-    sqlBuilder.InitialCatalog = "MusicStore";
+    sqlBuilder.InitialCatalog = "CPRESCOD";
     sqlBuilder.TrustServerCertificate=true;
 
     using SqlConnection connection = new SqlConnection(sqlBuilder.ConnectionString);
 
 var builder = WebApplication.CreateBuilder(args);
-
-static void ReadSingleRow(IDataRecord dataRecord)
-{
-    Console.WriteLine(String.Format("{0}, {1}", dataRecord[0], dataRecord[1]));
-}
 
 
 // Add services to the container.
@@ -35,59 +30,83 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapGet("/questions", () => {
+app.MapGet("/categories", () => {
     connection.Open();       
 
-    String sql = "SELECT AlbumId,Title,ArtistId FROM Album";
+    String sql = "SELECT ID, name, shortname FROM dbo.QCategory";
 
     using SqlCommand command = new SqlCommand(sql, connection);
     
     using SqlDataReader reader = command.ExecuteReader(); 
 
-    List<AlbumClass> albumList = new List<AlbumClass>();
+    List<categoryClass> categoryList = new List<categoryClass>();
 
     while (reader.Read()){
-        //Console.WriteLine("{0} {1} {2}", reader.GetInt32(0), reader.GetString(1), reader.GetInt32(2));
-        albumList.Add(new AlbumClass{AlbumID=reader.GetInt32(0),Title=reader.GetString(1),ArtistID=reader.GetInt32(2)});
+        categoryList.Add(new categoryClass{categoryID=reader.GetInt32(0),name=reader.GetString(1),shortname=reader.GetString(2)});
     }
     connection.Close();
-    return albumList;    
+    return categoryList;    
+})
+.WithName("GetCategories")
+.WithOpenApi();
+
+// questions = app.MapGroup("/questions");
+
+app.MapGet("/questions/{categoryID}", (int categoryID) => {
+    connection.Open();       
+
+    String sql = $"SELECT q.ID, q.questionTitle, q.questionText, q.startCode, q.programTest, q.solution FROM dbo.Questions q JOIN dbo.QCLink qc ON q.ID = qc.questionID WHERE qc.categoryID = {categoryID}";
+
+    using SqlCommand command = new SqlCommand(sql, connection);
+    
+    using SqlDataReader reader = command.ExecuteReader(); 
+
+    List<questionClass> questionList = new List<questionClass>();
+
+    while (reader.Read()){
+        questionList.Add(new questionClass{questionID=reader.GetInt32(0),questionTitle=reader.GetString(1),questionText=reader.GetString(2),startCode=reader.GetString(3),programTest=reader.GetString(4),solution=reader.GetString(5)});
+    }
+    connection.Close();
+    return questionList;    
 })
 .WithName("GetQuestions")
 .WithOpenApi();
 
-app.Run();
+// questions.MapGet("/", () => {
+//     connection.Open();       
 
-class AlbumClass
-{
-    public int AlbumID { get; set; }
-    public string? Title { get; set; }
-    public int ArtistID { get; set; }
-}
+//     String sql = "SELECT ID, name, shortname FROM dbo.Questions";
 
+//     using SqlCommand command = new SqlCommand(sql, connection);
+    
+//     using SqlDataReader reader = command.ExecuteReader(); 
 
-//Ignore the weather stuff, only keeping it in to see if i can have multiple endpoints
-// var summaries = new[]
-// {
-//     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-// };
+//     List<categoryClass> categoryList = new List<categoryClass>();
 
-// app.MapGet("/weatherforecast", () =>
-// {
-//     var forecast =  Enumerable.Range(1, 5).Select(index =>
-//         new WeatherForecast
-//         (
-//             DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-//             Random.Shared.Next(-20, 55),
-//             summaries[Random.Shared.Next(summaries.Length)]
-//         ))
-//         .ToArray();
-//     return forecast;
+//     while (reader.Read()){
+//         categoryList.Add(new categoryClass{categoryID=reader.GetInt32(0),name=reader.GetString(1),shortname=reader.GetString(2)});
+//     }
+//     connection.Close();
+//     return categoryList;    
 // })
-// .WithName("GetWeatherForecast")
+// .WithName("GetQuestionsNoID")
 // .WithOpenApi();
 
-// record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-// {
-//     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-// }
+app.Run();
+
+class categoryClass
+{
+    public int categoryID { get; set; }
+    public string? name { get; set; }
+    public string? shortname { get; set; }
+}
+ 
+class questionClass
+{
+    public int questionID { get; set; }
+    public string? questionTitle { get; set; }
+    public string? questionText { get; set; }
+    public string? startCode { get; set; }
+    public string? programTest { get; set; }
+    public string? solution { get; set; }
+}
