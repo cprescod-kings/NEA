@@ -1,0 +1,41 @@
+{
+  "Files": [
+    {
+      "Id": "\\\\kings.internal\\Students$\\2018\\cprescod18\\Downloads\\Year 13C#\\Year 13C#\\NEAWebsite\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\NEAWebsite.bundle.scp.css",
+      "PackagePath": "staticwebassets\\NEAWebsite.bundle.scp.css"
+    },
+    {
+      "Id": "\\\\kings.internal\\Students$\\2018\\cprescod18\\Downloads\\Year 13C#\\Year 13C#\\NEAWebsite\\wwwroot\\app.css",
+      "PackagePath": "staticwebassets\\app.css"
+    },
+    {
+      "Id": "\\\\kings.internal\\Students$\\2018\\cprescod18\\Downloads\\Year 13C#\\Year 13C#\\NEAWebsite\\wwwroot\\bootstrap\\bootstrap.min.css",
+      "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css"
+    },
+    {
+      "Id": "\\\\kings.internal\\Students$\\2018\\cprescod18\\Downloads\\Year 13C#\\Year 13C#\\NEAWebsite\\wwwroot\\bootstrap\\bootstrap.min.css.map",
+      "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css.map"
+    },
+    {
+      "Id": "\\\\kings.internal\\Students$\\2018\\cprescod18\\Downloads\\Year 13C#\\Year 13C#\\NEAWebsite\\wwwroot\\favicon.png",
+      "PackagePath": "staticwebassets\\favicon.png"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.NEAWebsite.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.NEAWebsite.props",
+      "PackagePath": "build\\NEAWebsite.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.NEAWebsite.props",
+      "PackagePath": "buildMultiTargeting\\NEAWebsite.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.NEAWebsite.props",
+      "PackagePath": "buildTransitive\\NEAWebsite.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

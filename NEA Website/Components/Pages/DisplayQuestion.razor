@@ -1,0 +1,60 @@
+@page "/questions/{CategoryID:int}/{QuestionID:int}"
+@attribute [StreamRendering]
+@inject HttpClient Http
+
+<PageTitle>Question</PageTitle>
+
+<h1>Questions</h1>
+
+@if (question == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    @if (question.questionTitle.Length != 0)
+    {
+        <h2>@question.questionTitle</h2>
+    }
+    @if (question.questionText.Length != 0)
+    {
+        <h4>Question Text</h4>
+        <p>@question.questionText</p>
+    }
+    @if (question.startCode.Length != 0)
+    {
+        <h4>Start Code</h4>
+        <p>@question.startCode</p>
+    }
+    @if (question.programTest.Length != 0)
+    {
+        <h4>Program Test</h4>
+        <p>@question.programTest</p>
+    }
+}
+
+ 
+@code {
+    private questionClass question;
+    protected override async Task OnInitializedAsync()
+    {
+        question = await Http.GetFromJsonAsync<questionClass>($"/questions/{CategoryID}/{QuestionID}");
+        
+        // Simulate asynchronous loading to demonstrate streaming rendering
+    }
+ 
+    class questionClass
+    {
+        public int questionID { get; set; }
+        public string? questionTitle { get; set; }
+        public string? questionText { get; set; }
+        public string? startCode { get; set; }
+        public string? programTest { get; set; }
+        public string? solution { get; set; }
+    }
+
+    [Parameter]
+    public int CategoryID { get; set; }
+    [Parameter]
+    public int QuestionID {get ; set; }
+}

@@ -1,0 +1,62 @@
+@page "/questions/{CategoryID:int}"
+@page "/questions"
+@attribute [StreamRendering]
+@inject HttpClient Http
+
+<PageTitle>Questions</PageTitle>
+
+<h1>Questions</h1>
+
+@if (questionList.Count == 0)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Text</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (questionClass question in questionList)
+            {
+                <tr>
+                    <td>@question.questionID</td>
+                    <td><a  href="/questions/@CategoryID/@question.questionID">@question.questionTitle</a></td>
+                    <td>@question.questionText</td>
+                </tr>
+            }
+        </tbody>
+    </table> 
+}
+
+ 
+@code {
+    private List<questionClass> questionList = new List<questionClass>();
+    protected override async Task OnInitializedAsync()
+    {
+        if(CategoryID != 0){
+            questionList = await Http.GetFromJsonAsync<List<questionClass>>($"/questions/{CategoryID}");
+        } else {
+            questionList = await Http.GetFromJsonAsync<List<questionClass>>("/questions/0");
+        }
+        // Simulate asynchronous loading to demonstrate streaming rendering
+    }
+
+    class questionClass
+    {
+        public int questionID { get; set; }
+        public string? questionTitle { get; set; }
+        public string? questionText { get; set; }
+        public string? startCode { get; set; }
+        public string? programTest { get; set; }
+        public string? solution { get; set; }
+    }
+
+    [Parameter]
+    public int CategoryID { get; set; }
+}
