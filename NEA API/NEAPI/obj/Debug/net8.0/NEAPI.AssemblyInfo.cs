@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("NEAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c636063348505c820661844b78277e279385c85a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cb5542b4d3842c575935f062374fe597b7e90436")]
 [assembly: System.Reflection.AssemblyProductAttribute("NEAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("NEAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

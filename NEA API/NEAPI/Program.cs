@@ -53,10 +53,14 @@ app.MapGet("/categories", () => {
 // questions = app.MapGroup("/questions");
 
 app.MapGet("/questions/{categoryID}", (int categoryID) => {
-    connection.Open();       
+    connection.Open();    
+    string sql   ;
+    if(categoryID != 0){
+        sql = $"SELECT q.ID, q.questionTitle, q.questionText, q.startCode, q.programTest, q.solution FROM dbo.Questions q JOIN dbo.QCLink qc ON q.ID = qc.questionID WHERE qc.categoryID = {categoryID}";
 
-    String sql = $"SELECT q.ID, q.questionTitle, q.questionText, q.startCode, q.programTest, q.solution FROM dbo.Questions q JOIN dbo.QCLink qc ON q.ID = qc.questionID WHERE qc.categoryID = {categoryID}";
-
+    } else {
+        sql = $"SELECT ID, questionTitle, questionText, startCode, programTest, solution FROM dbo.Questions";
+    }
     using SqlCommand command = new SqlCommand(sql, connection);
     
     using SqlDataReader reader = command.ExecuteReader(); 
@@ -70,6 +74,27 @@ app.MapGet("/questions/{categoryID}", (int categoryID) => {
     return questionList;    
 })
 .WithName("GetQuestions")
+.WithOpenApi();
+
+app.MapGet("/questions/{categoryID}/{questionID}", (int categoryID, int questionID) => {
+    connection.Open();    
+    string sql   ;
+
+    sql = $"SELECT ID, questionTitle, questionText, startCode, programTest, solution FROM dbo.Questions WHERE ID = {questionID}";
+
+    using SqlCommand command = new SqlCommand(sql, connection);
+    
+    using SqlDataReader reader = command.ExecuteReader(); 
+
+    questionClass question = new questionClass();
+
+    while (reader.Read()){
+        question = new questionClass{questionID=reader.GetInt32(0),questionTitle=reader.GetString(1),questionText=reader.GetString(2),startCode=reader.GetString(3),programTest=reader.GetString(4),solution=reader.GetString(5)};
+    }
+    connection.Close();
+    return question;    
+})
+.WithName("GetQuestion")
 .WithOpenApi();
 
 // questions.MapGet("/", () => {
