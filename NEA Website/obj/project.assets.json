@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "\\\\kings.internal\\Students$\\2018\\cprescod18\\Downloads\\Year 13C#\\Year 13C#\\NEAWebsite\\NEAWebsite.csproj",
+      "projectUniqueName": "\\\\kings.internal\\Students$\\2018\\cprescod18\\Downloads\\Year 13C#\\Year 13C#\\NEA Website\\NEAWebsite.csproj",
       "projectName": "NEAWebsite",
-      "projectPath": "\\\\kings.internal\\Students$\\2018\\cprescod18\\Downloads\\Year 13C#\\Year 13C#\\NEAWebsite\\NEAWebsite.csproj",
+      "projectPath": "\\\\kings.internal\\Students$\\2018\\cprescod18\\Downloads\\Year 13C#\\Year 13C#\\NEA Website\\NEAWebsite.csproj",
       "packagesPath": "C:\\Users\\cprescod18\\.nuget\\packages\\",
-      "outputPath": "\\\\kings.internal\\Students$\\2018\\cprescod18\\Downloads\\Year 13C#\\Year 13C#\\NEAWebsite\\obj\\",
+      "outputPath": "\\\\kings.internal\\Students$\\2018\\cprescod18\\Downloads\\Year 13C#\\Year 13C#\\NEA Website\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\cprescod18\\AppData\\Roaming\\NuGet\\NuGet.Config"

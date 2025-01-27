@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "VpraqRd8w2q5pUaHkL7iPdmAYU9FmN5HFX98bm+NKU8=",
+  "Hash": "3i8RfH6UFXj+xjYY5juR4cRkwchGGYJSVjqrGKZ/n0A=",
   "Source": "NEAWebsite",
   "BasePath": "_content/NEAWebsite",
   "Mode": "Default",
@@ -10,17 +10,17 @@
     {
       "Name": "NEAWebsite\\wwwroot",
       "Source": "NEAWebsite",
-      "ContentRoot": "\\\\kings.internal\\Students$\\2018\\cprescod18\\Downloads\\Year 13C#\\Year 13C#\\NEAWebsite\\wwwroot\\",
+      "ContentRoot": "\\\\kings.internal\\Students$\\2018\\cprescod18\\Downloads\\Year 13C#\\Year 13C#\\NEA Website\\wwwroot\\",
       "BasePath": "_content/NEAWebsite",
       "Pattern": "**"
     }
   ],
   "Assets": [
     {
-      "Identity": "\\\\kings.internal\\Students$\\2018\\cprescod18\\Downloads\\Year 13C#\\Year 13C#\\NEAWebsite\\obj\\Debug\\net8.0\\scopedcss\\bundle\\NEAWebsite.styles.css",
+      "Identity": "\\\\kings.internal\\Students$\\2018\\cprescod18\\Downloads\\Year 13C#\\Year 13C#\\NEA Website\\obj\\Debug\\net8.0\\scopedcss\\bundle\\NEAWebsite.styles.css",
       "SourceId": "NEAWebsite",
       "SourceType": "Computed",
-      "ContentRoot": "\\\\kings.internal\\Students$\\2018\\cprescod18\\Downloads\\Year 13C#\\Year 13C#\\NEAWebsite\\obj\\Debug\\net8.0\\scopedcss\\bundle\\",
+      "ContentRoot": "\\\\kings.internal\\Students$\\2018\\cprescod18\\Downloads\\Year 13C#\\Year 13C#\\NEA Website\\obj\\Debug\\net8.0\\scopedcss\\bundle\\",
       "BasePath": "_content/NEAWebsite",
       "RelativePath": "NEAWebsite.styles.css",
       "AssetKind": "All",
@@ -33,13 +33,13 @@
       "AssetTraitValue": "ApplicationBundle",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "\\\\kings.internal\\Students$\\2018\\cprescod18\\Downloads\\Year 13C#\\Year 13C#\\NEAWebsite\\obj\\Debug\\net8.0\\scopedcss\\bundle\\NEAWebsite.styles.css"
+      "OriginalItemSpec": "\\\\kings.internal\\Students$\\2018\\cprescod18\\Downloads\\Year 13C#\\Year 13C#\\NEA Website\\obj\\Debug\\net8.0\\scopedcss\\bundle\\NEAWebsite.styles.css"
     },
     {
-      "Identity": "\\\\kings.internal\\Students$\\2018\\cprescod18\\Downloads\\Year 13C#\\Year 13C#\\NEAWebsite\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\NEAWebsite.bundle.scp.css",
+      "Identity": "\\\\kings.internal\\Students$\\2018\\cprescod18\\Downloads\\Year 13C#\\Year 13C#\\NEA Website\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\NEAWebsite.bundle.scp.css",
       "SourceId": "NEAWebsite",
       "SourceType": "Computed",
-      "ContentRoot": "\\\\kings.internal\\Students$\\2018\\cprescod18\\Downloads\\Year 13C#\\Year 13C#\\NEAWebsite\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\",
+      "ContentRoot": "\\\\kings.internal\\Students$\\2018\\cprescod18\\Downloads\\Year 13C#\\Year 13C#\\NEA Website\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\",
       "BasePath": "_content/NEAWebsite",
       "RelativePath": "NEAWebsite.bundle.scp.css",
       "AssetKind": "All",
@@ -52,13 +52,13 @@
       "AssetTraitValue": "ProjectBundle",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "\\\\kings.internal\\Students$\\2018\\cprescod18\\Downloads\\Year 13C#\\Year 13C#\\NEAWebsite\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\NEAWebsite.bundle.scp.css"
+      "OriginalItemSpec": "\\\\kings.internal\\Students$\\2018\\cprescod18\\Downloads\\Year 13C#\\Year 13C#\\NEA Website\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\NEAWebsite.bundle.scp.css"
     },
     {
-      "Identity": "\\\\kings.internal\\Students$\\2018\\cprescod18\\Downloads\\Year 13C#\\Year 13C#\\NEAWebsite\\wwwroot\\app.css",
+      "Identity": "\\\\kings.internal\\Students$\\2018\\cprescod18\\Downloads\\Year 13C#\\Year 13C#\\NEA Website\\wwwroot\\app.css",
       "SourceId": "NEAWebsite",
       "SourceType": "Discovered",
-      "ContentRoot": "\\\\kings.internal\\Students$\\2018\\cprescod18\\Downloads\\Year 13C#\\Year 13C#\\NEAWebsite\\wwwroot\\",
+      "ContentRoot": "\\\\kings.internal\\Students$\\2018\\cprescod18\\Downloads\\Year 13C#\\Year 13C#\\NEA Website\\wwwroot\\",
       "BasePath": "_content/NEAWebsite",
       "RelativePath": "app.css",
       "AssetKind": "All",
@@ -74,10 +74,10 @@
       "OriginalItemSpec": "wwwroot\\app.css"
     },
     {
-      "Identity": "\\\\kings.internal\\Students$\\2018\\cprescod18\\Downloads\\Year 13C#\\Year 13C#\\NEAWebsite\\wwwroot\\bootstrap\\bootstrap.min.css",
+      "Identity": "\\\\kings.internal\\Students$\\2018\\cprescod18\\Downloads\\Year 13C#\\Year 13C#\\NEA Website\\wwwroot\\bootstrap\\bootstrap.min.css",
       "SourceId": "NEAWebsite",
       "SourceType": "Discovered",
-      "ContentRoot": "\\\\kings.internal\\Students$\\2018\\cprescod18\\Downloads\\Year 13C#\\Year 13C#\\NEAWebsite\\wwwroot\\",
+      "ContentRoot": "\\\\kings.internal\\Students$\\2018\\cprescod18\\Downloads\\Year 13C#\\Year 13C#\\NEA Website\\wwwroot\\",
       "BasePath": "_content/NEAWebsite",
       "RelativePath": "bootstrap/bootstrap.min.css",
       "AssetKind": "All",
@@ -93,10 +93,10 @@
       "OriginalItemSpec": "wwwroot\\bootstrap\\bootstrap.min.css"
     },
     {
-      "Identity": "\\\\kings.internal\\Students$\\2018\\cprescod18\\Downloads\\Year 13C#\\Year 13C#\\NEAWebsite\\wwwroot\\bootstrap\\bootstrap.min.css.map",
+      "Identity": "\\\\kings.internal\\Students$\\2018\\cprescod18\\Downloads\\Year 13C#\\Year 13C#\\NEA Website\\wwwroot\\bootstrap\\bootstrap.min.css.map",
       "SourceId": "NEAWebsite",
       "SourceType": "Discovered",
-      "ContentRoot": "\\\\kings.internal\\Students$\\2018\\cprescod18\\Downloads\\Year 13C#\\Year 13C#\\NEAWebsite\\wwwroot\\",
+      "ContentRoot": "\\\\kings.internal\\Students$\\2018\\cprescod18\\Downloads\\Year 13C#\\Year 13C#\\NEA Website\\wwwroot\\",
       "BasePath": "_content/NEAWebsite",
       "RelativePath": "bootstrap/bootstrap.min.css.map",
       "AssetKind": "All",
@@ -112,10 +112,10 @@
       "OriginalItemSpec": "wwwroot\\bootstrap\\bootstrap.min.css.map"
     },
     {
-      "Identity": "\\\\kings.internal\\Students$\\2018\\cprescod18\\Downloads\\Year 13C#\\Year 13C#\\NEAWebsite\\wwwroot\\favicon.png",
+      "Identity": "\\\\kings.internal\\Students$\\2018\\cprescod18\\Downloads\\Year 13C#\\Year 13C#\\NEA Website\\wwwroot\\favicon.png",
       "SourceId": "NEAWebsite",
       "SourceType": "Discovered",
-      "ContentRoot": "\\\\kings.internal\\Students$\\2018\\cprescod18\\Downloads\\Year 13C#\\Year 13C#\\NEAWebsite\\wwwroot\\",
+      "ContentRoot": "\\\\kings.internal\\Students$\\2018\\cprescod18\\Downloads\\Year 13C#\\Year 13C#\\NEA Website\\wwwroot\\",
       "BasePath": "_content/NEAWebsite",
       "RelativePath": "favicon.png",
       "AssetKind": "All",

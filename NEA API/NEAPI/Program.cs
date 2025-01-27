@@ -50,8 +50,6 @@ app.MapGet("/categories", () => {
 .WithName("GetCategories")
 .WithOpenApi();
 
-// questions = app.MapGroup("/questions");
-
 app.MapGet("/questions/{categoryID}", (int categoryID) => {
     connection.Open();    
     string sql   ;
@@ -97,25 +95,53 @@ app.MapGet("/questions/{categoryID}/{questionID}", (int categoryID, int question
 .WithName("GetQuestion")
 .WithOpenApi();
 
-// questions.MapGet("/", () => {
-//     connection.Open();       
+app.MapPost("/verifyuser", async (VerifyUserRequest request) =>
+{
+    Console.WriteLine("Received");
+    var email = request.Email;
+    connection.Open();  
 
-//     String sql = "SELECT ID, name, shortname FROM dbo.Questions";
+    string sql;
 
-//     using SqlCommand command = new SqlCommand(sql, connection);
+    int returnCode = -1;
+
+    sql = $"SELECT * FROM dbo.[User] WHERE email = '{email}'";
+
+    using SqlCommand command = new SqlCommand(sql, connection);
     
-//     using SqlDataReader reader = command.ExecuteReader(); 
+    using SqlDataReader reader = command.ExecuteReader(); 
 
-//     List<categoryClass> categoryList = new List<categoryClass>();
+    while (reader.Read()){
+        returnCode = reader.GetInt32(0);
+    }
 
-//     while (reader.Read()){
-//         categoryList.Add(new categoryClass{categoryID=reader.GetInt32(0),name=reader.GetString(1),shortname=reader.GetString(2)});
-//     }
-//     connection.Close();
-//     return categoryList;    
-// })
-// .WithName("GetQuestionsNoID")
-// .WithOpenApi();
+    Console.WriteLine(returnCode);
+
+    connection.Close();
+    return Results.Ok(returnCode);    
+})
+.WithName("VerifyUser")
+.WithOpenApi();
+
+app.MapPost("/submit", (answerClass answer) => {
+    connection.Open();  
+
+    string sql;
+
+    sql = $"INSERT INTO dbo.Answers (userID, questionID, content) VALUES ({answer.userID},{answer.questionID},'{answer.content}')";
+
+    Console.WriteLine(sql);
+
+    using SqlCommand command = new SqlCommand(sql, connection);
+    
+    command.ExecuteNonQuery(); 
+
+
+    connection.Close();
+    return;    
+})
+.WithName("SubmitAnswer")
+.WithOpenApi();
 
 app.Run();
 
@@ -134,4 +160,15 @@ class questionClass
     public string? startCode { get; set; }
     public string? programTest { get; set; }
     public string? solution { get; set; }
+}
+class answerClass
+    {
+        public int questionID { get; set; }
+        public int userID { get; set; }
+        public string content { get; set; }
+    }
+
+public class VerifyUserRequest
+{
+    public string Email { get; set; }
 }

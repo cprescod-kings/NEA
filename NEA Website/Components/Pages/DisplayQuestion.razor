@@ -1,5 +1,6 @@
 @page "/questions/{CategoryID:int}/{QuestionID:int}"
 @attribute [StreamRendering]
+@rendermode InteractiveServer
 @inject HttpClient Http
 
 <PageTitle>Question</PageTitle>
@@ -31,18 +32,76 @@ else
         <h4>Program Test</h4>
         <p>@question.programTest</p>
     }
+    <div class="mb-3">
+        <label for="exampleFormControlInput1" class="form-label">Email address</label>
+        <input type="email" class="form-control" placeholder="name@bi.kgapupils.uk" @bind="@email">
+    </div>
+    <div class="mb-3">
+        <label for="exampleFormControlTextarea1" class="form-label">Example textarea</label>
+        <textarea class="form-control" rows="20" @bind="@answer" ></textarea>
+    </div>
+    <div class="mb-3">
+        <button class="btn btn-success" @onclick="Submit" disabled="@IsDisabled">Submit</button>
+    </div>
+    <div class="mb-3">
+        <p>@status</p>
+    </div>
 }
-
  
 @code {
     private questionClass question;
+    public string answer = string.Empty;
+    public string status = "";
+    public string email = string.Empty;
+    public bool IsDisabled = false;
+
+    public string Description { get; set; } = string.Empty;
+
+    private void Submit(){
+        var requestData = new { Email = email };
+        HttpResponseMessage httpresponse = Http.PostAsJsonAsync($"/verifyuser", requestData).Result;
+        status = "Verify request sent";
+        if (httpresponse.IsSuccessStatusCode)
+        {
+            // Read the response body (which should be the user ID as a number)
+            var responseContent = httpresponse.Content.ReadAsStringAsync().Result;
+            status = "Response content recieved";
+
+            // Parse the user ID (ensure it's an integer)
+            if (int.TryParse(responseContent, out int userId))
+            {
+                status = "UserID Parsed";
+                if(userId != -1){ 
+                    status = "Success, your answer has been submitted!";
+                    IsDisabled = true;
+                    answerClass submittedAnswer = new answerClass{userID=userId, questionID=QuestionID, content=answer};
+                    // Submit answer content     
+                    Http.PostAsJsonAsync("/submit", submittedAnswer);
+                } else {
+                    status = "Your email could not be verified, please ensure its typed correctly and try again!";
+                }
+            }
+            else
+            {
+                // Handle the case where the response content wasn't a valid integer
+                status = "Failed to parse user ID from response.";
+            }
+        }
+        else
+        {
+            // Handle the error response
+            var errorContent = httpresponse.Content.ReadAsStringAsync().Result;
+            status = $"Error: {errorContent}";
+        }
+        @* int response = int.Parse(httpresponse.ToString()); *@
+    }
     protected override async Task OnInitializedAsync()
     {
         question = await Http.GetFromJsonAsync<questionClass>($"/questions/{CategoryID}/{QuestionID}");
         
         // Simulate asynchronous loading to demonstrate streaming rendering
     }
- 
+
     class questionClass
     {
         public int questionID { get; set; }
@@ -53,8 +112,17 @@ else
         public string? solution { get; set; }
     }
 
+    class answerClass
+    {
+        public int questionID { get; set; }
+        public int userID { get; set; }
+        public string content { get; set; }
+    }
+
     [Parameter]
     public int CategoryID { get; set; }
     [Parameter]
     public int QuestionID {get ; set; }
+   
+
 }
