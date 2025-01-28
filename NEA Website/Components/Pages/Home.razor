@@ -1,7 +1,28 @@
 ﻿@page "/"
+@using Microsoft.AspNetCore.Authorization
+@using System.Security.Claims
 
 <PageTitle>Home</PageTitle>
 
 <h1>Hello, world!</h1>
 
-Welcome to your new app.
+Please login to view and answer questions
+
+<Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+    <Authorized>
+        <h1>You are authenticated!</h1>
+        <ul>
+            <li>ID: @context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value</li>
+            <li>Email: @context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)!.Value</li>
+            <li>Name: @context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.GivenName)!.Value</li>
+        </ul>
+    </Authorized>
+</Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+
+@code {
+    [CascadingParameter]
+    public HttpContext context {get;set;}
+
+    string name;
+    
+}

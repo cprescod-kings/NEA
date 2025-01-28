@@ -1,5 +1,7 @@
 @page "/questions/{CategoryID:int}"
 @page "/questions"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
 @attribute [StreamRendering]
 @inject HttpClient Http
 

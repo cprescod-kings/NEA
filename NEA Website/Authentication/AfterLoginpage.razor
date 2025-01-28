@@ -1,0 +1,40 @@
+@page "/after-login";
+@using System.Security.Claims
+@inject NavigationManager NavManager
+@inject HttpClient Http
+<h3>AfterLoginPage</h3>
+
+@code {
+    [CascadingParameter]
+    public HttpContext httpContext {get;set;}
+
+    protected async override Task OnInitializedAsync()
+    {
+        if(!httpContext.User.Identity!.IsAuthenticated) return;
+        var email = httpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)!.Value;
+        var name = httpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.GivenName)!.Value;
+
+        var requestData = new { Email = email };
+        HttpResponseMessage httpresponse = Http.PostAsJsonAsync($"/verifyuser", requestData).Result;
+        if (httpresponse.IsSuccessStatusCode)
+        {
+            // Read the response body (which should be the user ID as a number)
+            var responseContent = httpresponse.Content.ReadAsStringAsync().Result;
+
+            // Parse the user ID (ensure it's an integer)
+            if (int.TryParse(responseContent, out int userId))
+            {
+                if(userId == -1){ 
+                    await Http.PostAsJsonAsync("/createuser", new userClass{name=name, email=email});
+                }
+            }
+        }
+
+        NavManager.NavigateTo("/");
+    }
+
+    class userClass {
+        public string name {get; set;}
+        public string email {get; set;}
+    }
+}

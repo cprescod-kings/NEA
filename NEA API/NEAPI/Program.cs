@@ -97,7 +97,6 @@ app.MapGet("/questions/{categoryID}/{questionID}", (int categoryID, int question
 
 app.MapPost("/verifyuser", async (VerifyUserRequest request) =>
 {
-    Console.WriteLine("Received");
     var email = request.Email;
     connection.Open();  
 
@@ -115,12 +114,30 @@ app.MapPost("/verifyuser", async (VerifyUserRequest request) =>
         returnCode = reader.GetInt32(0);
     }
 
-    Console.WriteLine(returnCode);
-
     connection.Close();
     return Results.Ok(returnCode);    
 })
 .WithName("VerifyUser")
+.WithOpenApi();
+
+app.MapPost("/createuser", async (userClass user) => {
+    var email = user.email;
+    var name = user.name;
+
+    string sql;
+
+    connection.Open();  
+    
+    sql = $"INSERT INTO dbo.[User] (name, email) VALUES ('{user.name}','{user.email}')";
+
+    using SqlCommand command = new SqlCommand(sql, connection);
+    
+    command.ExecuteNonQuery(); 
+
+    connection.Close();
+    return;
+})
+.WithName("CreateUser")
 .WithOpenApi();
 
 app.MapPost("/submit", (answerClass answer) => {
@@ -130,12 +147,9 @@ app.MapPost("/submit", (answerClass answer) => {
 
     sql = $"INSERT INTO dbo.Answers (userID, questionID, content) VALUES ({answer.userID},{answer.questionID},'{answer.content}')";
 
-    Console.WriteLine(sql);
-
     using SqlCommand command = new SqlCommand(sql, connection);
     
     command.ExecuteNonQuery(); 
-
 
     connection.Close();
     return;    
@@ -171,4 +185,8 @@ class answerClass
 public class VerifyUserRequest
 {
     public string Email { get; set; }
+}
+class userClass {
+    public string name { get; set; }
+    public string email { get; set; }
 }
