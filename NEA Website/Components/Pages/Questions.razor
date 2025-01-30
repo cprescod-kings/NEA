@@ -29,7 +29,7 @@ else
                 <tr>
                     <td>@question.questionID</td>
                     <td><a  href="/questions/@CategoryID/@question.questionID">@question.questionTitle</a></td>
-                    <td>@question.questionText</td>
+                    <td>@question.questionText.Replace("\"\"","\"")</td>
                 </tr>
             }
         </tbody>

@@ -1,9 +1,7 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server;
-using Microsoft.EntityFrameworkCore;
 using NEAWebsite.Authentication;
 using NEAWebsite.Components;
 
@@ -15,15 +13,17 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddScoped(sp => new HttpClient() {BaseAddress = new Uri("http://localhost:5260")});
+builder.Services.AddScoped(sp => new HttpClient() { BaseAddress = new Uri("http://localhost:5260") });
 
 
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<AuthenticationStateProvider, ServerAuthenticationStateProvider>();
 builder.Services.AddAuthentication(AppConstants.AuthScheme)
-    .AddCookie(AppConstants.AuthScheme, cookieOptions => {
+    .AddCookie(AppConstants.AuthScheme, cookieOptions =>
+    {
         cookieOptions.Cookie.Name = AppConstants.AuthScheme;
-    }).AddGoogle(GoogleDefaults.AuthenticationScheme, googleOptions => {
+    }).AddGoogle(GoogleDefaults.AuthenticationScheme, googleOptions =>
+    {
         googleOptions.ClientId = "331429665194-i5n5sbfvjuoh8vp781g0ssjklhpcn7cr.apps.googleusercontent.com";
         googleOptions.ClientSecret = "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";
         googleOptions.AccessDeniedPath = "/access-denied";

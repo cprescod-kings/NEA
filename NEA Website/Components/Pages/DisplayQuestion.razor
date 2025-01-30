@@ -18,22 +18,22 @@ else
 {
     @if (question.questionTitle.Length != 0)
     {
-        <h2>@question.questionTitle</h2>
+        <h2>@((MarkupString)@question.questionTitle.Replace("\"\"","\""))</h2>
     }
     @if (question.questionText.Length != 0)
     {
         <h4>Question Text</h4>
-        <p>@question.questionText</p>
+        <p>@((MarkupString)@question.questionText.Replace("\"\"","\""))</p>
     }
     @if (question.startCode.Length != 0)
     {
         <h4>Start Code</h4>
-        <p>@question.startCode</p>
+        <p>@((MarkupString)("<code>"+question.startCode.Replace("\"\"","\"")+"</code>"))</p>
     }
     @if (question.programTest.Length != 0)
     {
         <h4>Program Test</h4>
-        <p>@question.programTest</p>
+        <p>@((MarkupString)@question.programTest)</p>
     }
     <div class="mb-3">
         <label class="form-label">Email address</label>
@@ -41,7 +41,7 @@ else
     </div>
     <div class="mb-3">
         <label class="form-label">Your Answer</label>
-        <textarea class="form-control" rows="20" @bind="@answer"></textarea>
+        <textarea class="form-control" rows="20" @bind="@answer" disabled="@IsDisabled"></textarea>
     </div>
     <div class="mb-3">
         <button class="btn btn-success" @onclick="Submit" disabled="@IsDisabled">Submit</button>
