@@ -6,9 +6,12 @@
 
 <h1>Hello, world!</h1>
 
-Please login to view and answer questions
+
 
 <Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+    <NotAuthorized>
+        Please login to view and answer questions
+    </NotAuthorized>
     <Authorized>
         <h1>You are authenticated!</h1>
         <ul>
@@ -22,7 +25,4 @@ Please login to view and answer questions
 @code {
     [CascadingParameter]
     public HttpContext context {get;set;}
-
-    string name;
-    
 }

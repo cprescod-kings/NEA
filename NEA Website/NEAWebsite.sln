@@ -5,6 +5,8 @@ VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NEAWebsite", "NEAWebsite.csproj", "{66E5A621-C9A6-439D-B5FC-ADCA9D4ED2E3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NEAPI", "..\NEA API\NEAPI\NEAPI.csproj", "{62402769-122D-4A02-A2D6-1C5BFC9D33F8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{66E5A621-C9A6-439D-B5FC-ADCA9D4ED2E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{66E5A621-C9A6-439D-B5FC-ADCA9D4ED2E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{66E5A621-C9A6-439D-B5FC-ADCA9D4ED2E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{62402769-122D-4A02-A2D6-1C5BFC9D33F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{62402769-122D-4A02-A2D6-1C5BFC9D33F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62402769-122D-4A02-A2D6-1C5BFC9D33F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{62402769-122D-4A02-A2D6-1C5BFC9D33F8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

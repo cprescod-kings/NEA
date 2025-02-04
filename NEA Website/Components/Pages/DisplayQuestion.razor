@@ -8,8 +8,6 @@
 
 <PageTitle>Question</PageTitle>
 
-<h1>Questions</h1>
-
 @if (question == null)
 {
     <p><em>Loading...</em></p>
@@ -126,7 +124,13 @@ else
                     {
                         status = "Success, your answer has been submitted!";
                         IsDisabled = true;
-                        answerClass submittedAnswer = new answerClass { userID = userId, questionID = QuestionID, content = answer };
+
+                        bool assignment = false;
+                        if(CategoryID == -1){
+                            assignment = true;
+                        }
+
+                        answerClass submittedAnswer = new answerClass { userID = userId, questionID = QuestionID, content = answer, assignment = assignment };
                         // Submit answer content
                         Http.PostAsJsonAsync("/submit", submittedAnswer);
                     }
@@ -162,10 +166,13 @@ else
         public string? solution { get; set; }
     }
 
+    
+
     class answerClass
     {
         public int questionID { get; set; }
         public int userID { get; set; }
         public string content { get; set; }
+        public bool assignment { get; set; }
     }
 }

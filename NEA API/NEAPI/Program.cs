@@ -95,7 +95,7 @@ app.MapGet("/questions/{categoryID}/{questionID}", (int categoryID, int question
 .WithName("GetQuestion")
 .WithOpenApi();
 
-app.MapPost("/verifyuser", async (VerifyUserRequest request) =>
+app.MapPost("/verifyuser", (VerifyUserRequest request) =>
 {
     var email = request.Email;
     connection.Open();  
@@ -120,7 +120,7 @@ app.MapPost("/verifyuser", async (VerifyUserRequest request) =>
 .WithName("VerifyUser")
 .WithOpenApi();
 
-app.MapPost("/createuser", async (userClass user) => {
+app.MapPost("/createuser", (userClass user) => {
     var email = user.email;
     var name = user.name;
 
@@ -152,9 +152,100 @@ app.MapPost("/submit", (answerClass answer) => {
     command.ExecuteNonQuery(); 
 
     connection.Close();
+
+    Console.WriteLine(answer.assignment);
+
+    if(answer.assignment){
+        connection.Open();
+        
+        sql = $"DELETE FROM dbo.Assignments WHERE questionID = {answer.questionID} AND userID = {answer.userID}";
+
+        using SqlCommand command1 = new SqlCommand(sql, connection);
+
+        command1.ExecuteNonQuery();
+
+        connection.Close();
+    }
+
     return;    
 })
 .WithName("SubmitAnswer")
+.WithOpenApi();
+
+app.MapPost("/assignments", (VerifyUserRequest request) => {
+    var email = request.Email;
+    
+    connection.Open();
+
+    string sql;
+
+    int id = -1;
+    int questionId = -1;
+
+    sql = $"SELECT * FROM dbo.[User] WHERE email = '{email}'";
+
+    using SqlCommand command = new SqlCommand(sql, connection);
+    
+    using SqlDataReader reader = command.ExecuteReader(); 
+
+    while (reader.Read()){
+        id = reader.GetInt32(0);
+    }
+
+    connection.Close();
+    connection.Open();
+
+    sql = $"SELECT questionID, dueDate FROM dbo.Assignments WHERE userID = {id}";
+
+    using SqlCommand command1 = new SqlCommand(sql, connection);
+
+    using SqlDataReader reader1 = command1.ExecuteReader();
+
+    DateTime assignmentDate = DateTime.Now;
+    
+    while (reader1.Read()){
+        questionId = reader1.GetInt32(0);
+        assignmentDate = reader1.GetDateTime(1);
+    }
+
+    // Calculate the difference in days
+    int totalDays = (assignmentDate - DateTime.Now).Days;
+
+    // Calculate weeks and days
+    int weeksAway = totalDays / 7;  // Full weeks
+    int daysAway = totalDays % 7;   // Remainder days
+
+    connection.Close();
+    connection.Open();
+
+    sql = $"SELECT ID, questionTitle, questionText, startCode, programTest, solution FROM dbo.Questions WHERE ID = {questionId}";
+
+    using SqlCommand command2 = new SqlCommand(sql, connection);
+    
+    using SqlDataReader reader2 = command2.ExecuteReader(); 
+
+    List<assignmentClass> assignmentList = new List<assignmentClass>();
+
+    while (reader2.Read()){
+        assignmentList.Add(
+            new assignmentClass{
+                questionID=reader2.GetInt32(0),
+                questionTitle=reader2.GetString(1),
+                questionText=reader2.GetString(2),
+                startCode=reader2.GetString(3),
+                programTest=reader2.GetString(4),
+                solution=reader2.GetString(5),
+                EventDate=assignmentDate,
+                WeeksAway=weeksAway,
+                DaysAway=daysAway
+            }
+        );
+    }
+    connection.Close();
+
+    return Results.Ok(assignmentList);
+})
+.WithName("Assignments")
 .WithOpenApi();
 
 app.Run();
@@ -175,11 +266,18 @@ class questionClass
     public string? programTest { get; set; }
     public string? solution { get; set; }
 }
+class assignmentClass : questionClass
+{
+    public DateTime EventDate { get; set; }
+    public int DaysAway { get; set; }
+    public int WeeksAway { get; set; }
+}
 class answerClass
     {
         public int questionID { get; set; }
         public int userID { get; set; }
         public string content { get; set; }
+        public bool assignment { get; set; }
     }
 
 public class VerifyUserRequest

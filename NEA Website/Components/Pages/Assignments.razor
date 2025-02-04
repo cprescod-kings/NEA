@@ -1,0 +1,121 @@
+@page "/assignments"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+@attribute [StreamRendering]
+@inject HttpClient Http
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Http
+@rendermode InteractiveServer
+@inject HttpClient Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+<PageTitle>Assignments</PageTitle>
+
+<h1>Assignments</h1>
+
+<p>If you want the assignment to be submitted, you MUST go through this page to the question</p>
+
+@if (assignmentList.Count == 0)
+{
+    <p>No Assignments!</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Text</th>
+                <th>Due Date</th>
+                <th>Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (assignmentClass question in assignmentList)
+            {
+                <tr>
+                    <td>@question.questionID</td>
+                    <td><a  href="/questions/-1/@question.questionID">@question.questionTitle</a></td>
+                    <td>@question.questionText.Replace("\"\"","\"")</td>
+                    <td>@question.EventDate.ToString("MMMM dd, yyyy")</td>
+                    
+                    @if(question.WeeksAway == 0){
+                        <td>@question.DaysAway days</td>
+                    } else {
+                        <td>@question.WeeksAway Weeks, @question.DaysAway Days</td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table> 
+}
+
+ 
+@code {
+    private List<assignmentClass> assignmentList = new List<assignmentClass>();
+    private assignmentClass question;
+    public string answer = string.Empty;
+    public string status = "";
+    public string email = string.Empty;
+    public bool IsDisabled = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            // Retrieve the email from the HttpContext using IHttpContextAccessor
+            var userClaims = HttpContextAccessor.HttpContext?.User?.Claims;
+            if (userClaims != null)
+            {
+                var emailClaim = userClaims.FirstOrDefault(c => c.Type == ClaimTypes.Email);
+                if (emailClaim != null)
+                {
+                    email = emailClaim.Value;
+                }
+                else
+                {
+                    status = "Email claim not found.";
+                }
+            }
+            else
+            {
+                status = "User or Claims not available.";
+            }
+
+            
+            var requestData = new { Email = email };
+            // Initialize the question data
+            HttpResponseMessage response = await Http.PostAsJsonAsync($"/assignments", requestData);
+
+            assignmentList = await response.Content.ReadFromJsonAsync<List<assignmentClass>>();
+            
+
+            if (question == null)
+            {
+                status = "Failed to load the question data.";
+            }
+        }
+        catch (Exception ex)
+        {
+            status = $"Error initializing the page: {ex.Message}";
+        }
+    }
+
+    class questionClass
+    {
+        public int questionID { get; set; }
+        public string? questionTitle { get; set; }
+        public string? questionText { get; set; }
+        public string? startCode { get; set; }
+        public string? programTest { get; set; }
+        public string? solution { get; set; }
+    }
+
+    class assignmentClass : questionClass
+    {
+        public DateTime EventDate { get; set; }
+        public int DaysAway { get; set; }
+        public int WeeksAway { get; set; }
+    }
+}
