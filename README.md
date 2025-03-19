@@ -218,7 +218,7 @@ nvarchar(-1) classroom ""
 "dbo.Answers" |o--|{ "dbo.Questions": "ID"
 ```
 #### Framework Design
-![[Pasted image 20241128104955.png]]
+[Framework Design](https://github.com/cprescod-kings/NEA/blob/main/Pasted%20image%2020241128104955.png)
 #### SQL Design
 ##### SELECT statements
 ```SQL
