@@ -63,7 +63,7 @@
 	- A fully functional Blazor website with seamless integration between the front-end, C# backend, and SQL server.
 	- User accounts for students with secure login functionality.
 	- A comprehensive question repository accessible to students, with capabilities for teachers to manage content.
-	- Optional features that enhance user experience, such as variable questions and real-time feedback, are implemented for further engagement.
+	- Optional features that enhance user experience, such as variable questions and feedback, are implemented for further engagement.
 ### Model Designs
 #### Basic System Graph
 ```mermaid
