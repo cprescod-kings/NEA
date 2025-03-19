@@ -124,7 +124,7 @@ erDiagram
 | Dotnet                                                     | C# Environment required to build the website    |
 | Blazor                                                     | C# Library used to build dynamic web pages      |
 | ASP-NET.OpenAPI                                            | Connectivity between frontend and backend       |
-| SQL server (MySQL)                                         | Database to store all required data/information |
+| SQL server (Microsoft SQL)                                 | Database to store all required data/information |
 | IIS Server                                                 | Webserver used to serve the page                |
 | HTTP Data Stream                                           | Data format used to exchange data               |
 | Bootstrap                                                  | CSS Library used to improve frontend            |
