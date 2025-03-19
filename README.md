@@ -220,7 +220,141 @@ nvarchar(-1) classroom ""
 #### Framework Design
 ![Pasted image 20241128104955](https://github.com/user-attachments/assets/252a7a30-21f7-40af-88b3-f9434c519d8d)
 #### SQL Design
-##### SELECT statements
+##### Create Table Scripts
+Answers
+```SQL
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Answers](
+	[userID] [int] NULL,
+	[answerID] [int] IDENTITY(1,1) NOT NULL,
+	[questionID] [int] NULL,
+	[content] [nvarchar](max) NULL,
+ CONSTRAINT [PK_Answers] PRIMARY KEY CLUSTERED 
+(
+	[answerID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[Answers]  WITH CHECK ADD  CONSTRAINT [FK_Answers_Questions] FOREIGN KEY([questionID])
+REFERENCES [dbo].[Questions] ([ID])
+GO
+ALTER TABLE [dbo].[Answers] CHECK CONSTRAINT [FK_Answers_Questions]
+GO
+ALTER TABLE [dbo].[Answers]  WITH CHECK ADD  CONSTRAINT [FK_Answers_User] FOREIGN KEY([userID])
+REFERENCES [dbo].[User] ([ID])
+GO
+ALTER TABLE [dbo].[Answers] CHECK CONSTRAINT [FK_Answers_User]
+GO
+```
+Assignments
+```SQL
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Assignments](
+	[questionID] [int] NULL,
+	[userID] [int] NULL,
+	[assignmentID] [int] IDENTITY(1,1) NOT NULL,
+	[dueDate] [date] NULL,
+ CONSTRAINT [PK_Assignments] PRIMARY KEY CLUSTERED 
+(
+	[assignmentID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[Assignments]  WITH CHECK ADD  CONSTRAINT [FK_Assignments_Questions] FOREIGN KEY([questionID])
+REFERENCES [dbo].[Questions] ([ID])
+GO
+ALTER TABLE [dbo].[Assignments] CHECK CONSTRAINT [FK_Assignments_Questions]
+GO
+ALTER TABLE [dbo].[Assignments]  WITH CHECK ADD  CONSTRAINT [FK_Assignments_User] FOREIGN KEY([userID])
+REFERENCES [dbo].[User] ([ID])
+GO
+ALTER TABLE [dbo].[Assignments] CHECK CONSTRAINT [FK_Assignments_User]
+GO
+```
+Question Category
+```SQL
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[QCategory](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[name] [nvarchar](max) NULL,
+	[shortname] [nvarchar](max) NULL,
+ CONSTRAINT [PK_QCategory] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+```
+Question-Category Link
+```SQL
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[QCLink](
+	[categoryID] [int] NULL,
+	[questionID] [int] NULL
+) ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[QCLink]  WITH CHECK ADD  CONSTRAINT [FK_QCLink_QCategory] FOREIGN KEY([categoryID])
+REFERENCES [dbo].[QCategory] ([ID])
+GO
+ALTER TABLE [dbo].[QCLink] CHECK CONSTRAINT [FK_QCLink_QCategory]
+GO
+ALTER TABLE [dbo].[QCLink]  WITH CHECK ADD  CONSTRAINT [FK_QCLink_Questions] FOREIGN KEY([questionID])
+REFERENCES [dbo].[Questions] ([ID])
+GO
+ALTER TABLE [dbo].[QCLink] CHECK CONSTRAINT [FK_QCLink_Questions]
+GO
+```
+Questions
+```SQL
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Questions](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[questionTitle] [nvarchar](max) NULL,
+	[questionText] [nvarchar](max) NULL,
+	[startCode] [nvarchar](max) NULL,
+	[programTest] [nvarchar](max) NULL,
+	[solution] [nvarchar](max) NULL,
+ CONSTRAINT [PK_Questions] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+```
+User
+```SQL
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[User](
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[name] [nvarchar](max) NULL,
+	[classroom] [nvarchar](max) NULL,
+	[email] [nvarchar](max) NULL,
+ CONSTRAINT [PK_user] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+```
+##### SELECT Scripts
 ```SQL
 FROM
 ```
