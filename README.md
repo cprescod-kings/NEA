@@ -106,38 +106,38 @@ graph TD;
 - Assignments/Feedback (Optional)
 	- Should show assigned questions from teachers
 	- Have a way to access marking and feedback from teachers
+#### Framework Design
+![Pasted image 20241128104955](https://github.com/user-attachments/assets/252a7a30-21f7-40af-88b3-f9434c519d8d)
 #### Requirements
-| Requirement ID | Description                                                                                                                                           |
-| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| REQ1           | There should be a web page for the user to view and use                                                                                               |
-| REQ2           | There should be a landing page                                                                                                                        |
-| REQ3           | The landing page should have restricted navigation                                                                                                    |
-| REQ4           | The landing page should also have a login button                                                                                                      |
-| REQ5           | When the login button is pressed, the user should be prompted to login using google authentication                                                    |
-| REQ6           | If an account does not exist, an account should be made automatically on the behalf of the user                                                       |
-| REQ7           | There should be 7 more pages: Questions, Categories, Assignments, Question, Answers, Teacher                                                          |
-| REQ8           | Once logged in, buttons for navigation should be allowed on the left                                                                                  |
-| REQ8           | A student user should be allowed navigation to 4 pages from any other page once logged in: Categories, Questions, Assignments, and Answers/Feedback   |
-| REQ9           | A student user should be taken automatically to assignments on login                                                                                  |
-| REQ10          | If the user has assignments due, they should be present in a table                                                                                    |
-| REQ11          | The table should have navigable links to each question                                                                                                |
-| REQ12          | If there are no assignments due, then a message as "No assignments" should be displayed                                                               |
-| REQ12          | The categories page should have a table displaying the question categories                                                                            |
-| REQ13          | Each category should have certain data displayed, such as the ID and name                                                                             |
-| REQ14          | Each category should have a navigable link                                                                                                            |
-| REQ15          | When navigating from the categories links, the questions on the questions page should be filtered                                                     |
-| REQ16          | The question page should display a table displaying the questions                                                                                     |
-| REQ17          | The table should display data such as the ID, name, and question text                                                                                 |
-| REQ18          | Each question should have a navigable link                                                                                                            |
-| REQ19          | There should be a 5th page for answering questions,                                                                                                   |
-| REQ20          | The question page should contain the rest of the question data, such as starting code, examples, tests, and any other relevant information if present |
-| REQ21          | If the data is not present in the database, it should remain hidden                                                                                   |
-| REQ22          | There should be a text-box for the user to insert their answer into                                                                                   |
-| REQ23          | There should be a button at the bottom of the question page which allows the user to submit their answer for the question                             |
-| REQ24          | The question page should confirm whether or not the answer was submitted successfully                                                                 |
-| REQ25          | If there was an error, it should be explained in a user-friendly way                                                                                  |
-| REQ26          | From every page there should be a button to log out                                                                                                   |
-| REQ27          | The name of the logged-in user should be displayed at the top of every page                                                                           |
+| Requirement ID | Description                                                                                                                                            | Category             |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------- |
+| REQ1           | There should be a web platform for the user to view and use                                                                                            | Layout               |
+| REQ2           | There should be 8 pages: Landing, Questions, Categories, Assignments, Question, Answers, Teacher                                                       | Layout               |
+| REQ3           | The landing page should restrict navigation by hiding the navigation menu options unless logged in                                                     | Landing              |
+| REQ4           | The landing page should also have a login button                                                                                                       | Landing              |
+| REQ5           | When the login button is pressed, the user should be prompted to login using google authentication                                                     | Login                |
+| REQ6           | If an account does not exist, an account should be made automatically on the behalf of the user                                                        | Login                |
+| REQ7           | Once logged in, buttons for navigation should be visible on the left                                                                                   | Layout               |
+| REQ8           | A student user should be allowed navigation to 4 pages from any other page once logged in: Categories, Questions, Assignments, and Answers/Feedback    | Layout               |
+| REQ9           | A student user should be taken automatically to assignments on login                                                                                   | Login                |
+| REQ10          | If the user has assignments due, they should be present in a table                                                                                     | Assignments          |
+| REQ11          | The table should have navigable links to each relevant question page                                                                                   | Assignments          |
+| REQ12          | If there are no assignments due, then a message as "No assignments" should be displayed                                                                | Assignments          |
+| REQ12          | The categories page should have a table displaying the question categories                                                                             | Categories           |
+| REQ13          | Each category should have relevant data displayed, such as the ID and name                                                                             | Categories           |
+| REQ14          | Each category should have a navigable link that takes you to the questions page                                                                        | Categories           |
+| REQ15          | When navigating from the categories links to the questions page, the questions should be filtered to the specified category                            | Categories/Questions |
+| REQ16          | The question page should display a table displaying the questions                                                                                      | Questions            |
+| REQ17          | The table should display relevant data such as the ID, name, and question text                                                                         | Questions            |
+| REQ18          | Each question should have a navigable link that takes you to the specified question page                                                               | Questions/Question   |
+| REQ19          | The question page should contain all of the relevant data, such as starting code, examples, tests, text, and any other relevant information if present | Question             |
+| REQ20          | If the data is not present in the database, it should remain hidden                                                                                    | Question             |
+| REQ21          | There should be a text-box for the user to insert their answer into                                                                                    | Question             |
+| REQ22          | There should be a button at the bottom of the question page which allows the user to submit their answer for the question                              | Question             |
+| REQ23          | The question page should confirm whether or not the answer was submitted successfully                                                                  | Question             |
+| REQ24          | If there was an error submitting the answer, a potential reason should be explained in the confirmation                                                | Question             |
+| REQ25          | From every page there should be a button to log out                                                                                                    | Layout               |
+| REQ26          | The name of the logged-in user should be displayed at the top of every page                                                                            | Layout               |
 
 #### ERD
 ```mermaid
