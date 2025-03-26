@@ -72,8 +72,8 @@ Blazor -- Req Data --> C#-Backend
 C#-Backend -- Requested Data -->Blazor
 id1[(Database)]
 C#-Backend <--> id1
-id2([Google Auth\noptional])
-C#-Backend <--> id2
+id2([Google Auth optional])
+Blazor <--> id2
 
 ```
 #### Site Map
@@ -92,7 +92,7 @@ graph TD;
 	Login-->QuestionRepoPage
 	QuestionRepoPage<-->Question
 ```
-##### Page Requirements
+##### Loose Page Requirements
 - Login page
 	- Must contain some form of identification
 	- Starting point of the service
@@ -106,6 +106,8 @@ graph TD;
 - Assignments/Feedback (Optional)
 	- Should show assigned questions from teachers
 	- Have a way to access marking and feedback from teachers
+#### Requirements
+
 #### ERD
 ```mermaid
 erDiagram
