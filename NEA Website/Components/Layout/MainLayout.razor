@@ -1,6 +1,8 @@
 ﻿@inherits LayoutComponentBase
+@using System.Security.Claims
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize]
+@inject IHttpContextAccessor HttpContextAccessor
 
 <div class="page">
     <div class="sidebar">
@@ -8,14 +10,16 @@
     </div>
 
     <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+        <div class="top-row px-4 d-flex justify-content-between align-items-center">
+            <!-- Text on the left side of the top bar -->
+            <span class="left-text">@name, @email</span>
+
             <Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
                 <Authorized>
-                        <a href="/logout">Logout</a>
+                    <a href="/logout">Logout</a>
                 </Authorized>
                 <NotAuthorized>
-                        <a href="/login">Login</a>
+                    <a href="/login">Login</a>
                 </NotAuthorized>
             </Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
         </div>
@@ -30,3 +34,26 @@
     <a href="" class="reload">Reload</a>
     <a class="dismiss">🗙</a>
 </div>
+
+@code {
+    public string name = string.Empty;
+    public string email = string.Empty;
+
+    protected async override Task OnInitializedAsync()
+    {
+        var userClaims = HttpContextAccessor.HttpContext?.User?.Claims;
+        if (userClaims != null)
+        {
+            var emailClaim = userClaims.FirstOrDefault(c => c.Type == ClaimTypes.Email);
+            if (emailClaim != null)
+            {
+                email = emailClaim.Value;
+            }
+            var nameClaim = userClaims.FirstOrDefault(c => c.Type == ClaimTypes.GivenName);
+            if (nameClaim != null)
+            {
+                name = nameClaim.Value;
+            }
+        }
+    }
+}

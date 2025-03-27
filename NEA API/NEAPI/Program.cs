@@ -213,7 +213,7 @@ app.MapPost("/assignments", (VerifyUserRequest request) => {
 
     // Calculate weeks and days
     int weeksAway = totalDays / 7;  // Full weeks
-    int daysAway = totalDays % 7;   // Remainder days
+    int daysAway = (totalDays % 7)+1;   // Remainder days
 
     connection.Close();
     connection.Open();
@@ -246,6 +246,48 @@ app.MapPost("/assignments", (VerifyUserRequest request) => {
     return Results.Ok(assignmentList);
 })
 .WithName("Assignments")
+.WithOpenApi();
+
+app.MapGet("/users", () => {
+    connection.Open();       
+
+    String sql = "SELECT ID, name, email, teacher FROM dbo.[User]";
+
+    using SqlCommand command = new SqlCommand(sql, connection);
+    
+    using SqlDataReader reader = command.ExecuteReader(); 
+
+    List<enhancedUserClass> userList = new List<enhancedUserClass>();
+
+    while (reader.Read()){
+        userList.Add(new enhancedUserClass{id=reader.GetInt32(0),name=reader.GetString(1),email=reader.GetString(2),teacher=reader.GetBoolean(3)});
+    }
+
+    connection.Close();
+    return userList;    
+})
+.WithName("GetUsers")
+.WithOpenApi();
+
+app.MapGet("/answers/{userID}", (int userID) => {
+    connection.Open();
+    
+    String sql = $"SELECT a.content, a.userID, a.questionID, q.questionTitle AS questionTitle FROM Answers a INNER JOIN Questions q ON a.questionID = q.ID WHERE a.userID = {userID};";
+
+    using SqlCommand command = new SqlCommand(sql, connection);
+    
+    using SqlDataReader reader = command.ExecuteReader(); 
+
+    List<returnAnswerClass> userList = new List<returnAnswerClass>();
+
+    while (reader.Read()){
+        userList.Add(new returnAnswerClass{content=reader.GetString(0),userID=reader.GetInt32(1),questionID=reader.GetInt32(2),questionTitle=reader.GetString(3)});
+    }
+
+    connection.Close();
+    return userList;   
+})
+.WithName("GetAnswers")
 .WithOpenApi();
 
 app.Run();
@@ -287,4 +329,16 @@ public class VerifyUserRequest
 class userClass {
     public string name { get; set; }
     public string email { get; set; }
+}
+
+class enhancedUserClass : userClass {
+    public int id { get; set; }
+    public bool teacher { get; set; }
+}
+
+class returnAnswerClass { 
+    public string content { get; set; }
+    public int userID { get; set; }
+    public int questionID { get; set; }
+    public string questionTitle { get; set; }
 }

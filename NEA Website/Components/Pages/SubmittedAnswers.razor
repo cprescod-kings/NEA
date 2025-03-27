@@ -1,0 +1,161 @@
+@page "/answers"
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+@attribute [StreamRendering]
+@rendermode InteractiveServer
+@inject HttpClient Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+<PageTitle>Questions</PageTitle>
+
+<h1>Questions</h1>
+
+@if (isTeacher)
+{
+    <div>
+        <label for="userDropdown">Select a user:</label>
+        <select id="userDropdown" @onchange="OnUserChanged">
+            <option value="">Select a user</option>
+            @foreach (var user in userList)
+            {
+                <option value="@user.id">@user.name</option>
+            }
+        </select>
+    </div>
+}
+else
+{
+    <p>You are a student. Your ID: @currentUserId</p>
+}
+
+@if (selectedUserId != 0 || !isTeacher)
+{
+    <div>
+        <label for="answerDropdown">Select a question:</label>
+        <select id="answerDropdown" @onchange="OnQuestionChanged">
+            <option value="">Select a question</option>
+            @foreach (var questionGroup in userAnswers.GroupBy(a => a.questionID))
+            {
+                <option value="@questionGroup.Key">@questionGroup.First().questionTitle</option>
+            }
+        </select>
+    </div>
+}
+
+@if (selectedAnswerId != 0 && selectedQuestion != null)
+{
+    <h3>Question: @selectedQuestion.questionTitle</h3>
+    <p>@selectedQuestion.questionText</p>
+    <h4>Answers:</h4>
+    var selectedAnswers = userAnswers.Where(a => a.questionID == selectedAnswerId).ToList();
+    @foreach (var answer in selectedAnswers)
+    {
+        <div>
+            <p><strong>Answer ID: @answer.questionID</strong></p>
+            <p>@answer.content</p>
+        </div>
+    }
+}
+
+@code {
+    private List<enhancedUserClass> userList = new List<enhancedUserClass>();
+    private List<returnAnswerClass> userAnswers = new List<returnAnswerClass>();
+    private int selectedUserId = 0;  // User selected from the first dropdown
+    private int selectedAnswerId = 0;  // Answer selected from the second dropdown
+    private int selectedQuestionId = 0;  // Store the selected question ID
+    private questionClass selectedQuestion = null;  // Store the selected question
+    private string name = string.Empty;
+    private string email = string.Empty;
+    private bool isTeacher;
+    private int currentUserId;  // Store the current user's ID
+
+    protected async override Task OnInitializedAsync()
+    {
+        // Get current user claims
+        var userClaims = HttpContextAccessor.HttpContext?.User?.Claims;
+        if (userClaims != null)
+        {
+            var emailClaim = userClaims.FirstOrDefault(c => c.Type == ClaimTypes.Email);
+            if (emailClaim != null)
+            {
+                email = emailClaim.Value;
+            }
+            var nameClaim = userClaims.FirstOrDefault(c => c.Type == ClaimTypes.GivenName);
+            if (nameClaim != null)
+            {
+                name = nameClaim.Value;
+            }
+        }
+
+        // Fetch the user list
+        userList = await Http.GetFromJsonAsync<List<enhancedUserClass>>("/users");
+
+        // Check if the current user is a teacher
+        var currentUser = userList.FirstOrDefault(u => u.email == email);
+        if (currentUser != null)
+        {
+            isTeacher = currentUser.teacher; // Set flag if current user is a teacher
+            currentUserId = currentUser.id; // Set current user's ID
+        }
+
+        if (!isTeacher)
+        {
+            // Fetch the answers for the current student if the user is a student
+            userAnswers = await Http.GetFromJsonAsync<List<returnAnswerClass>>($"/answers/{currentUserId}");
+            StateHasChanged(); // Trigger re-render
+        }
+    }
+
+    // Handle user change event and fetch their answers (for teachers)
+    private async Task OnUserChanged(ChangeEventArgs e)
+    {
+        selectedUserId = int.Parse(e.Value.ToString());  // Get selected user ID from the event
+        if (selectedUserId != 0)
+        {
+            // Fetch the answers for the selected user
+            userAnswers = await Http.GetFromJsonAsync<List<returnAnswerClass>>($"/answers/{selectedUserId}");
+            selectedAnswerId = 0; // Reset the second dropdown when user changes
+            selectedQuestion = null; // Reset selected question when user changes
+            StateHasChanged(); // Manually trigger re-rendering
+        }
+    }
+
+    // Handle question change event and fetch the question details
+    private async Task OnQuestionChanged(ChangeEventArgs e)
+    {
+        selectedAnswerId = int.Parse(e.Value.ToString());  // Get selected question ID from the event
+        if (selectedAnswerId != 0)
+        {
+            // Fetch the question details based on CategoryID and selected QuestionID
+            selectedQuestion = await Http.GetFromJsonAsync<questionClass>($"/questions/0/{selectedAnswerId}");
+            StateHasChanged(); // Manually trigger re-rendering
+        }
+    }
+
+    // Class definitions for User, Answer, Question, and Answer Return
+    class enhancedUserClass
+    {
+        public string name { get; set; }
+        public string email { get; set; }
+        public int id { get; set; }
+        public bool teacher { get; set; }
+    }
+
+    class returnAnswerClass
+    {
+        public int questionID { get; set; }
+        public string questionTitle { get; set; }
+        public string content { get; set; }
+    }
+
+    class questionClass
+    {
+        public int questionID { get; set; }
+        public string? questionTitle { get; set; }
+        public string? questionText { get; set; }
+        public string? startCode { get; set; }
+        public string? programTest { get; set; }
+        public string? solution { get; set; }
+    }
+}
