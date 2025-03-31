@@ -34,7 +34,7 @@ else
     <div>
         <label for="answerDropdown">Select a question:</label>
         <select id="answerDropdown" @onchange="OnQuestionChanged">
-            <option value="">Select a question</option>
+            <option value="" disabled selected>Select a question</option>
             @foreach (var questionGroup in userAnswers.GroupBy(a => a.questionID))
             {
                 <option value="@questionGroup.Key">@questionGroup.First().questionTitle</option>
@@ -53,7 +53,7 @@ else
     {
         <div>
             <p><strong>Answer ID: @answer.questionID</strong></p>
-            <p>@answer.content</p>
+            <p>@((MarkupString)FormatAnswer(answer.content))</p>
         </div>
     }
 }
@@ -131,6 +131,11 @@ else
             selectedQuestion = await Http.GetFromJsonAsync<questionClass>($"/questions/0/{selectedAnswerId}");
             StateHasChanged(); // Manually trigger re-rendering
         }
+    }
+
+    private string FormatAnswer(string input)
+    {
+        return input.Replace("\n", "<br />");
     }
 
     // Class definitions for User, Answer, Question, and Answer Return

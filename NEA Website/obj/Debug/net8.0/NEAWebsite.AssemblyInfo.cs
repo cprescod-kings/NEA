@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("NEAWebsite")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+26621b6cdb2bdda37d6ce97c2f6e7d3ddad1fb50")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+098697fd7abdd97ab303984f25e89ff078bf1c0e")]
 [assembly: System.Reflection.AssemblyProductAttribute("NEAWebsite")]
 [assembly: System.Reflection.AssemblyTitleAttribute("NEAWebsite")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
