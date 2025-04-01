@@ -16,7 +16,7 @@
     <div>
         <label for="userDropdown">Select a user:</label>
         <select id="userDropdown" @onchange="OnUserChanged">
-            <option value="">Select a user</option>
+            <option value="" disabled  selected>Select a user</option>
             @foreach (var user in userList)
             {
                 <option value="@user.id">@user.name</option>
@@ -53,7 +53,7 @@ else
     {
         <div>
             <p><strong>Answer ID: @answer.questionID</strong></p>
-            <p>@((MarkupString)FormatAnswer(answer.content))</p>
+            <pre>@((MarkupString)FormatAnswer(answer.content))</pre>
         </div>
     }
 }
