@@ -112,7 +112,7 @@ graph TD;
 | Requirement ID | Description                                                                                                                                            | Category             |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------- |
 | REQ1           | There should be a web platform for the user to view and use                                                                                            | Layout               |
-| REQ2           | There should be 8 pages: Landing, Questions, Categories, Assignments, Question, Answers, Teacher                                                       | Layout               |
+| REQ2           | There should be 6 pages: Landing, Questions, Categories, Assignments, DisplayQuestion, and Answers                                                     | Layout               |
 | REQ3           | The landing page should restrict navigation by hiding the navigation menu options unless logged in                                                     | Landing              |
 | REQ4           | The landing page should also have a login button                                                                                                       | Landing              |
 | REQ5           | When the login button is pressed, the user should be prompted to login using google authentication                                                     | Login                |
@@ -130,14 +130,17 @@ graph TD;
 | REQ16          | The question page should display a table displaying the questions                                                                                      | Questions            |
 | REQ17          | The table should display relevant data such as the ID, name, and question text                                                                         | Questions            |
 | REQ18          | Each question should have a navigable link that takes you to the specified question page                                                               | Questions/Question   |
-| REQ19          | The question page should contain all of the relevant data, such as starting code, examples, tests, text, and any other relevant information if present | Question             |
-| REQ20          | If the data is not present in the database, it should remain hidden                                                                                    | Question             |
-| REQ21          | There should be a text-box for the user to insert their answer into                                                                                    | Question             |
-| REQ22          | There should be a button at the bottom of the question page which allows the user to submit their answer for the question                              | Question             |
-| REQ23          | The question page should confirm whether or not the answer was submitted successfully                                                                  | Question             |
-| REQ24          | If there was an error submitting the answer, a potential reason should be explained in the confirmation                                                | Question             |
+| REQ19          | The question page should contain all of the relevant data, such as starting code, examples, tests, text, and any other relevant information if present | DisplayQuestion      |
+| REQ20          | If the data is not present in the database, it should remain hidden                                                                                    | DisplayQuestion      |
+| REQ21          | There should be a text-box for the user to insert their answer into                                                                                    | DisplayQuestion      |
+| REQ22          | There should be a button at the bottom of the question page which allows the user to submit their answer for the question                              | DisplayQuestion      |
+| REQ23          | The question page should confirm whether or not the answer was submitted successfully                                                                  | DisplayQuestion      |
+| REQ24          | If there was an error submitting the answer, a potential reason should be explained in the confirmation                                                | DisplayQuestion      |
 | REQ25          | From every page there should be a button to log out                                                                                                    | Layout               |
 | REQ26          | The name of the logged-in user should be displayed at the top of every page                                                                            | Layout               |
+| REQ27          | The answer page should have dropdown(s) to view submitted questions                                                                                    | Answers              |
+| REQ28          | If the user is a student, they should only have access to a single dropdown containing their own questions, therefore the user dropdown remains hidden | Answers              |
+| REQ29          | If the user is a teacher, they should have access to an additional menu which allows the teacher to specify a user, then effecting the question menu   | Answers              |
 
 #### ERD
 ```mermaid
