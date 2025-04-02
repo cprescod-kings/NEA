@@ -2,7 +2,7 @@
 ### The Product
 
 - The product of my NEA project will be a dedicated website for computer science questions. This platform will enable teachers to assign questions to students, contribute their own questions to a central repository, and evaluate each student's progress effectively.
-- From the student’s viewpoint, they will be able to log in using Google authentication. Once logged in, students can view their assigned tasks, access assignments, and respond to questions. The system may potentially automatically mark their answers, though this feature will only apply to questions with fixed, objective answers (i.e., not open-ended or interpretative writing).
+- From the student’s viewpoint, they will be able to log in using Google authentication. Once logged in, students can view their assigned tasks, access assignments, and respond to questions.
 
 ### The Research
 
@@ -21,12 +21,10 @@
 - **Should-Haves** 
 	1. Implement individual student authentication. 
 	2. Enable teachers to receive submitted answers from students. 
-	3. Facilitate storage of answers for future review and track overall course progress.
+	3. Facilitate storage of answers for future review.
 	4. Allow teachers to modify existing questions and add new ones to the system.
 - **Could-Haves** 
-	1. Introduce randomised question variables to enhance variety and unpredictability. 
-	2. Utilise student-specific school Google accounts for authentication. 
-	3. Provide real-time feedback to students within the platform.
+  	1. Utilise student-specific school Google accounts for authentication. 
 ### Success Criteria
 1. **Must-Have Features**
 	- **Reliable Client-Server Connection**:
@@ -53,9 +51,6 @@
 	    - Include an interface for teachers to modify existing questions or add new questions directly through the website.
 	    - Ensure changes made by teachers are reflected in the system promptly.
 3. **Could-Have Features**
-	- **Randomised Question Variables**:
-	    - Implement dynamic question generation with variable elements to provide a unique experience for each student.
-	    - Ensure that the variability does not compromise the integrity or difficulty of the questions.
 	- **Google Account Authentication**:
 	    - Integrate authentication using students' school Google accounts for a streamlined and secure login process.
 	    - Attach their school accounts to their progress, so they can visualise how many questions they've answered
@@ -63,20 +58,25 @@
 	- A fully functional Blazor website with seamless integration between the front-end, C# backend, and SQL server.
 	- User accounts for students with secure login functionality.
 	- A comprehensive question repository accessible to students, with capabilities for teachers to manage content.
-	- Optional features that enhance user experience, such as variable questions and feedback, are implemented for further engagement.
 ### Model Designs
 #### Basic System Graph
 ```mermaid
 flowchart LR
-Blazor -- Req Data --> C#-Backend
-C#-Backend -- Requested Data -->Blazor
-id1[(Database)]
-C#-Backend <--> id1
-id2([Google Auth optional])
-Blazor <--> id2
+	Blazor -- Req Data --> C#-Backend
+	C#-Backend -- Requested Data -->Blazor
+	id1[(Database)]
+	C#-Backend <--> id1
+	id2([Google Auth optional])
+	Blazor <--> id2
 
 ```
 #### Site Map
+##### Basic
+```mermaid
+graph TD;
+	Login-->QuestionRepoPage
+	QuestionRepoPage<-->Question
+```
 ##### Ideal
 ```mermaid
 graph TD;
@@ -86,12 +86,7 @@ graph TD;
 	Assignments/Feedback<-->QuestionRepoPage
 	Question<-->QuestionRepoPage
 ```
-##### Basic
-```mermaid
-graph TD;
-	Login-->QuestionRepoPage
-	QuestionRepoPage<-->Question
-```
+
 ##### Loose Page Requirements
 - Login page
 	- Must contain some form of identification
@@ -103,10 +98,13 @@ graph TD;
 	- Should show the question
 	- Provide all following information
 	- Have some way to store the answer to the question
-- Assignments/Feedback (Optional)
+- Assignments (Optional)
 	- Should show assigned questions from teachers
 	- Have a way to access marking and feedback from teachers
-#### Framework Design
+- Assignments
+        - Should allow students to view answers have written
+   	- Should be able to select other students if teacher
+### Framework Design
 ![Pasted image 20241128104955](https://github.com/user-attachments/assets/252a7a30-21f7-40af-88b3-f9434c519d8d)
 #### Requirements
 | Requirement ID | Description                                                                                                                                            | Category             |
