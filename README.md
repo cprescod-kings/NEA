@@ -251,8 +251,66 @@ nvarchar(-1) classroom ""
 
 "dbo.Answers" |o--|{ "dbo.Questions": "ID"
 ```
+##### Table Descriptions
+###### Answers
+
+|Field Name|Type|Purpose|Constraints|
+|---|---|---|---|
+|userID|int|unique foreign key for the user who submitted the answer|FK|
+|answerID|int|unique primary key to identify the answer submitted|autoincremented, PK|
+|questionID|int|unique foregin key for the question the answer is related to|FK|
+|content|nvarchar(MAX)|the content of the answer submitted by the user|no constraints|
+
+###### Assignments
+
+|Field Name|Type|Purpose|Constraints|
+|---|---|---|---|
+|questionID|int|unique foreign key for the question that the assignment refers to|FK|
+|userID|int|unique foreign key that relates to the user that the assignment is for|FK|
+|assignmentID|int|unique primary key for each assignment|autoincremented, PK|
+|dueDate|date|the due date of the assignment|allow null|
+
+###### QCategory
+
+|Field Name|Type|Purpose|Constraints|
+|---|---|---|---|
+|ID|int|unique ID referencing the question categories|autoincrememnted, PK|
+|name|nvarchar(MAX)|the name of the category|no constraints|
+|shortname|nvarchar(MAX|the short codename for the category, e.g INT|no constraints|
+
+###### QCLink
+
+|Field Name|Type|Purpose|Constraints|
+|---|---|---|---|
+|categoryID|int|unique foreign key to referrence a category|FK, cluster PK|
+|quesionID|int|unique foreign key to referrence a question|FK, cluster PK|
+
+###### Question
+
+|Field Name|Type|Purpose|Constraints|
+|---|---|---|---|
+|ID|int|unique primary key to referrence a question|PK, autoincremented|
+|questionTitle|nvarchar(MAX)|title of the question|no constraints|
+|questionText|nvarchar(MAX)|the question itself|no constraints|
+|startCode|nvarchar(MAX)|starting code of the question|no constraints|
+|programTest|nvarchar(MAX)|the test program for the question|no constrainsts|
+|solutions|nvarchar(MAX)|the solution to the question|no constraints|
+
+###### User
+
+|Field Name|Type|Purpose|Constraints|
+|---|---|---|---|
+|ID|int|unique primary key for the related user|autoincremented,PK|
+|name|nvarchar(MAX)|name of the user|no constraints|
+|email|nvarchar(MAX)|email of the user|no constraints|
+|teacher|bit|whether or not the user should have access to teacher tools|default value: 0|
+
 #### Framework Design
 ![Pasted image 20241128104955](https://github.com/user-attachments/assets/252a7a30-21f7-40af-88b3-f9434c519d8d)
+
+###
+
+### Technical Solution
 #### SQL Design
 ##### Create Table Scripts
 Answers
