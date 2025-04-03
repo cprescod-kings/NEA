@@ -537,23 +537,23 @@ Function RenderCategories():
 ```
 ##### DisplayQuestion
 Page Initialization (OnInitializedAsync):
-    1. Send GET request to "/questions/{CategoryID}/{QuestionID}" to retrieve question data.
-    2. If the question is found:
-        - Display question details (title, text, start code, and program test).
-    3. If an error occurs during question retrieval:
-        - Set status to "Failed to load question data."
+1. Send GET request to "/questions/{CategoryID}/{QuestionID}" to retrieve question data.
+2. If the question is found:
+	- Display question details (title, text, start code, and program test).
+3. If an error occurs during question retrieval:
+   	- Set status to "Failed to load question data."
 
 Submit Answer (Submit):
-    1. Check if the email is available:
-        - If no, show error "Email is not available!"
-    2. Send POST request to "/verifyuser" with email to verify the user.
-    3. If verification is successful:
-        - Parse the userID from the response.
-        - If userID is valid:
-            - Submit the answer to the "/submit" endpoint along with questionID, userID, and content.
-            - Disable the input fields and display a success message.
-        - If verification fails:
-            - Display error message: "Email verification failed."
+1. Check if the email is available:
+	- If no, show error "Email is not available!"
+2. Send POST request to "/verifyuser" with email to verify the user.
+3. If verification is successful:
+	- Parse the userID from the response.
+	- If userID is valid:
+   		- Submit the answer to the "/submit" endpoint along with questionID, userID, and content.
+		- Disable the input fields and display a success message.
+	- If verification fails:
+		- Display error message: "Email verification failed."
 
 Error Handling:
     - Handle all exceptions with a descriptive error message.
@@ -577,23 +577,24 @@ Function Submit():
 ```
 ##### Questions
 Page Initialization (OnInitializedAsync):
-    1. Check if CategoryID is provided:
-        - If CategoryID != 0:
-            - Fetch questions using GET request to "/questions/{CategoryID}".
-        - Else:
-            - Fetch all questions using GET request to "/questions/0".
-    2. Store the retrieved questions in questionList.
-    3. If no questions are found, display "Loading...".
-    4. Render a table with columns: ID, Title, Text.
-        - For each question, display the ID, Title (as a link), and Text.
+1. Check if CategoryID is provided:
+	- If CategoryID != 0:
+		- Fetch questions using GET request to "/questions/{CategoryID}".
+	- Else:
+		- Fetch all questions using GET request to "/questions/0".
+2. Store the retrieved questions in questionList.
+3. If no questions are found, display "Loading...".
+4. Render a table with columns: ID, Title, Text.
+	- For each question, display the ID, Title (as a link), and Text.
 
 Rendering the Question List:
-    1. If questionList is empty, display loading message.
-    2. If questionList contains data, render a table with:
-        - ID
-        - Title (link to the question details page)
-        - Text (a short description)
+1. If questionList is empty, display loading message.
+2. If questionList contains data, render a table with:
+   	- ID
+   	- Title (link to the question details page)
+	- Text (a short description)
 ###### Pseudocode
+```
 Function OnInitializedAsync():
     - If CategoryID != 0:
         - Fetch questions using GET request to "/questions/{CategoryID}".
@@ -602,25 +603,26 @@ Function OnInitializedAsync():
     - Store the retrieved questions into questionList.
     - If questionList is empty, display "Loading...".
     - Render a table with the list of questions.
+```
 ##### SubmittedAnswers
 Function OnInitializedAsync():
-    - Fetch current user claims (email, name).
-    - Fetch user list from "/users".
-    - If the user is a teacher, display user dropdown for selecting a student.
-    - If the user is a student, fetch their answers.
+- Fetch current user claims (email, name).
+- Fetch user list from "/users".
+	- If the user is a teacher, display user dropdown for selecting a student.
+	- If the user is a student, fetch their answers.
 
 Function OnUserChanged(ChangeEventArgs e):
-    - Get selected user ID from the dropdown.
-    - Fetch answers for the selected user from "/answers/{userID}".
-    - Reset question and answer display.
+- Get selected user ID from the dropdown.
+- Fetch answers for the selected user from "/answers/{userID}".
+- Reset question and answer display.
 
 Function OnQuestionChanged(ChangeEventArgs e):
-    - Get selected question ID from the dropdown.
-    - Fetch the question details using "/questions/0/{questionID}".
-    - Display the selected question and answer.
+- Get selected question ID from the dropdown.
+- Fetch the question details using "/questions/0/{questionID}".
+- Display the selected question and answer.
 
 Function FormatAnswer(input):
-    - Replace newline characters with "<br />" for HTML display.
+- Replace newline characters with "<br />" for HTML display.
 ###### Pseudocode
 ```
 Function OnInitializedAsync():
