@@ -308,7 +308,343 @@ nvarchar(-1) classroom ""
 #### Framework Design
 ![Pasted image 20241128104955](https://github.com/user-attachments/assets/252a7a30-21f7-40af-88b3-f9434c519d8d)
 
-###
+#### Algorithms
+##### API
+1. **Get Categories** (`GET /categories`): Fetches a list of categories from the database.
+2. **Get Questions by Category** (`GET /questions/{categoryID}`): Retrieves a list of questions based on a given category ID, or all questions if no category ID is provided.
+3. **Get Specific Question** (`GET /questions/{categoryID}/{questionID}`): Retrieves a specific question based on both category and question ID.
+4. **Verify User** (`POST /verifyuser`): Verifies if a user exists in the database based on their email.
+5. **Create User** (`POST /createuser`): Creates a new user with a provided name and email.
+6. **Submit Answer** (`POST /submit`): Submits a user's answer to a specific question and deletes an assignment if it’s marked as completed.
+7. **Get Assignments** (`POST /assignments`): Retrieves assignments for a user based on their email, including details like due dates.
+8. **Get Users** (`GET /users`): Retrieves a list of all users with additional info such as whether they are a teacher.
+9. **Get User's Answers** (`GET /answers/{userID}`): Fetches all the answers provided by a user.
+###### Pseudocode
+
+1. **Get Categories** (GET /categories)
+   - **Action**: Connect to SQL database, query the `QCategory` table, and return the list of categories.
+   ```plaintext
+   Function GetCategories():
+       Open SQL connection
+       Execute query: SELECT ID, name, shortname FROM dbo.QCategory
+       While reading data:
+           Add each category to categoryList
+       Return categoryList
+   ```
+
+2. **Get Questions by Category** (GET /questions/{categoryID})
+   - **Action**: Fetch questions from a specific category or all questions.
+   ```plaintext
+   Function GetQuestionsByCategory(categoryID):
+       Open SQL connection
+       If categoryID is not 0:
+           Execute query to get questions by categoryID
+       Else:
+           Execute query to get all questions
+       While reading data:
+           Add each question to questionList
+       Return questionList
+   ```
+
+3. **Get Specific Question** (GET /questions/{categoryID}/{questionID})
+   - **Action**: Fetch a specific question based on questionID.
+   ```plaintext
+   Function GetQuestion(categoryID, questionID):
+       Open SQL connection
+       Execute query to get question by questionID
+       While reading data:
+           Create question object with details
+       Return question object
+   ```
+4. **Verify User** (POST /verifyuser)
+   - **Action**: Check if a user exists based on their email.
+   ```plaintext
+   Function VerifyUser(email):
+       Open SQL connection
+       Execute query to find user by email
+       If user found:
+           Return user ID
+       Else:
+           Return -1 (not found)
+   ```
+
+5. **Create User** (POST /createuser)
+   - **Action**: Insert a new user into the database.
+   ```plaintext
+   Function CreateUser(user):
+       Open SQL connection
+       Execute query to insert new user (name, email)
+       Close connection
+   ```
+
+6. **Submit Answer** (POST /submit)
+   - **Action**: Submit an answer to a question and potentially remove an assignment if the answer is marked as completed.
+   ```plaintext
+   Function SubmitAnswer(answer):
+       Open SQL connection
+       Insert answer into the Answers table
+       If answer.assignment is true:
+           Delete assignment from the Assignments table
+       Close connection
+   ```
+
+7. **Get Assignments** (POST /assignments)
+   - **Action**: Retrieve assignments for a user and calculate due dates.
+   ```plaintext
+   Function GetAssignments(email):
+       Open SQL connection
+       Fetch user ID based on email
+       Fetch assignments for the user
+       For each assignment:
+           Calculate due date (in weeks/days)
+       Return assignment list with due dates
+   ```
+
+8. **Get Users** (GET /users)
+   - **Action**: Fetch all users.
+   ```plaintext
+   Function GetUsers():
+       Open SQL connection
+       Execute query to fetch users (ID, name, email, teacher status)
+       While reading data:
+           Add each user to userList
+       Return userList
+   ```
+
+9. **Get User's Answers** (GET /answers/{userID})
+   - **Action**: Fetch all answers submitted by a user.
+   ```plaintext
+   Function GetUserAnswers(userID):
+       Open SQL connection
+       Execute query to fetch answers for userID
+       While reading data:
+           Add each answer to answerList
+       Return answerList
+   ```
+##### MainLayout
+Component Layout:
+
+  Initialize:
+    - Retrieve user claims from HttpContext (e.g., Name, Email)
+    - If user is authenticated:
+        - Extract Name and Email from claims
+        - Display Name and Email in the top row
+    - If user is NOT authenticated:
+        - Display "Login" link
+
+  Main Layout:
+    - Sidebar:
+        - Render navigation menu (NavMenu)
+    - Top Bar:
+        - Display Name and Email if authenticated
+        - Show Logout link if authenticated
+        - Show Login link if NOT authenticated
+    - Content Area:
+        - Render the page content passed via @Body
+
+  Error Handling:
+    - Show error message with reload option if an unhandled error occurs
+
+###### Pseudocode
+```
+Function OnInitializedAsync():
+    - Get userClaims from HttpContextAccessor
+    - If userClaims is not null:
+        - Find Email claim using ClaimTypes.Email
+        - If Email claim exists:
+            - Set email = Email claim value
+        - Find Name claim using ClaimTypes.GivenName
+        - If Name claim exists:
+            - Set name = Name claim value
+
+```
+
+##### Assignments
+Page Initialization:
+  - On page load:
+    - Retrieve the user's email from the claims.
+    - If email is found, make an API call to fetch assignments.
+    - If email is not found, display error message ("Email claim not found").
+  - API Request:
+    - Send POST request to "/assignments" with the user's email.
+    - If request is successful, store the list of assignments in `assignmentList`.
+    - If request fails, display error message.
+
+Display Assignments:
+  - If assignmentList is empty, show "No Assignments!".
+  - If assignmentList is not empty, display the assignments in a table:
+    - For each assignment:
+      - Show ID, Title (with a link), Text, Due Date, and Remaining Time (in weeks and days).
+###### Pseudocode
+```
+Function OnInitializedAsync():
+    - Get userClaims from HttpContextAccessor
+    - If userClaims is available:
+        - Extract Email claim
+        - If Email claim exists:
+            - Set email to Email claim value
+        - Else:
+            - Set status to "Email claim not found."
+    - Else:
+        - Set status to "User or Claims not available."
+    
+    - Prepare request data with Email
+    - Send POST request to "/assignments"
+    - If successful:
+        - Set assignmentList to the received response
+    - Else:
+        - Set status to "Failed to load the question data."
+```
+```
+Function RenderAssignments():
+    - If assignmentList is empty:
+        - Show message "No Assignments!"
+    - Else:
+        - For each assignment in assignmentList:
+            - Render assignment details (ID, Title, Text, Due Date, Remaining Time)
+```
+
+##### Categories
+Page Initialization:
+  - On page load:
+    - Send GET request to "/categories" to retrieve categories.
+    - Parse the response as a list of categoryClass.
+    - If categories are retrieved, update the UI to display the categories.
+    - If categories are not retrieved, show "Loading..." message.
+
+Display Categories:
+  - If categoryList is empty:
+    - Show "Loading..."
+  - If categoryList is not empty:
+    - Display categories in a table (ID, Name, Shortname).
+###### Pseudocode
+```
+Function OnInitializedAsync():
+    - Send GET request to "/categories"
+    - If successful:
+        - Set categoryList to the received response
+    - Else:
+        - Set status to "Failed to load categories."
+```
+```
+Function RenderCategories():
+    - If categoryList is empty:
+        - Show message "Loading..."
+    - Else:
+        - For each category in categoryList:
+            - Render category details (ID, Name, Shortname)
+            - Make category name a clickable link
+```
+##### DisplayQuestion
+Page Initialization (OnInitializedAsync):
+    1. Send GET request to "/questions/{CategoryID}/{QuestionID}" to retrieve question data.
+    2. If the question is found:
+        - Display question details (title, text, start code, and program test).
+    3. If an error occurs during question retrieval:
+        - Set status to "Failed to load question data."
+
+Submit Answer (Submit):
+    1. Check if the email is available:
+        - If no, show error "Email is not available!"
+    2. Send POST request to "/verifyuser" with email to verify the user.
+    3. If verification is successful:
+        - Parse the userID from the response.
+        - If userID is valid:
+            - Submit the answer to the "/submit" endpoint along with questionID, userID, and content.
+            - Disable the input fields and display a success message.
+        - If verification fails:
+            - Display error message: "Email verification failed."
+
+Error Handling:
+    - Handle all exceptions with a descriptive error message.
+###### Pseudocode
+```
+Function OnInitializedAsync():
+    - Try to get question data from "/questions/{CategoryID}/{QuestionID}".
+    - If successful, store the question data and display it.
+    - If failed, set status to "Failed to load the question data."
+```
+```
+Function Submit():
+    - Check if email is available:
+        - If not, show error: "Email is not available!"
+    - Send POST request to "/verifyuser" with email for verification.
+    - If verification is successful:
+        - Parse the user ID.
+        - If the user ID is valid, send the answer to "/submit".
+        - If invalid, show error: "Email verification failed!"
+    - Catch any exceptions and display an error message.
+```
+##### Questions
+Page Initialization (OnInitializedAsync):
+    1. Check if CategoryID is provided:
+        - If CategoryID != 0:
+            - Fetch questions using GET request to "/questions/{CategoryID}".
+        - Else:
+            - Fetch all questions using GET request to "/questions/0".
+    2. Store the retrieved questions in questionList.
+    3. If no questions are found, display "Loading...".
+    4. Render a table with columns: ID, Title, Text.
+        - For each question, display the ID, Title (as a link), and Text.
+
+Rendering the Question List:
+    1. If questionList is empty, display loading message.
+    2. If questionList contains data, render a table with:
+        - ID
+        - Title (link to the question details page)
+        - Text (a short description)
+###### Pseudocode
+Function OnInitializedAsync():
+    - If CategoryID != 0:
+        - Fetch questions using GET request to "/questions/{CategoryID}".
+    - Else:
+        - Fetch all questions using GET request to "/questions/0".
+    - Store the retrieved questions into questionList.
+    - If questionList is empty, display "Loading...".
+    - Render a table with the list of questions.
+##### SubmittedAnswers
+Function OnInitializedAsync():
+    - Fetch current user claims (email, name).
+    - Fetch user list from "/users".
+    - If the user is a teacher, display user dropdown for selecting a student.
+    - If the user is a student, fetch their answers.
+
+Function OnUserChanged(ChangeEventArgs e):
+    - Get selected user ID from the dropdown.
+    - Fetch answers for the selected user from "/answers/{userID}".
+    - Reset question and answer display.
+
+Function OnQuestionChanged(ChangeEventArgs e):
+    - Get selected question ID from the dropdown.
+    - Fetch the question details using "/questions/0/{questionID}".
+    - Display the selected question and answer.
+
+Function FormatAnswer(input):
+    - Replace newline characters with "<br />" for HTML display.
+###### Pseudocode
+```
+Function OnInitializedAsync():
+    1. Get current user claims (email, name).
+    2. Check if the user is a teacher.
+        - If yes, fetch the user list from "/users".
+        - If no, fetch answers for the current student from "/answers/{userID}".
+```
+```
+Function OnUserChanged(ChangeEventArgs e):
+    1. Get selected user ID.
+    2. Fetch answers for the selected user using "/answers/{userID}".
+    3. Reset question and answer display.
+```
+```
+Function OnQuestionChanged(ChangeEventArgs e):
+    1. Get selected question ID.
+    2. Fetch question details from "/questions/0/{questionID}".
+    3. Display the selected question and its corresponding answer.
+```
+```
+Function FormatAnswer(input):
+    - Replace newline characters with "<br />" for proper HTML display.
+```
 
 ### Technical Solution
 #### SQL Design
