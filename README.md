@@ -649,6 +649,375 @@ Function FormatAnswer(input):
 ```
 
 ### Technical Solution
+#### Installation instructions & Source Code
+Due to the private nature of the GitHub repository, the source code is shared via a platform called [wirps](https://wirps.com/).
+
+**To download the zip file of the repository, visit [this link](https://wirps.com/rhJ8Sf) (https://wirps.com/rhJ8Sf)**
+
+In order to run the project, you will need:
+- .NET 8.0 (or greater)
+- A separate Microsoft SQL server configured with DDL file and SQL import data (TBA) that is connectable
+
+**Installation instructions**
+1. Extract the zip file downloaded from wirps
+2. Open the folder named "NEA API"
+3. Open the `Program.cs` file in your chosen editor
+4. Within the connection string builder, insert your own connection credentials
+5. Open two command prompts
+	1. In the first command prompt, navigate to "NEA Website"
+	2. In the second command prompt, navigate to "NEA API"
+6. Use `dotnet watch` in each of the command prompts to run the respective programs
+	- It is suggested that the API is started first
+7. In the website command prompt, once the website is started, it should reveal an address to the website frontend
+8. Open the address in your chosen web browser
+9. You should have successfully ran the program, and are now looking at the frontend website for the project!
+
+#### Overview
+##### Technologies used
+- Blazor
+	- I chose Blazor as a learning exercise since we have learned C# for A level. I thought it would be challenging to learn these skills during this project
+- `Microsoft.AspNetCore.OpenApi`
+	- Used for the back-end to create the API, allowing the Blazor website to communicate with the SQL server
+- Microsoft SQL
+	- The SQL provider used for my project, chosen as it aligns with the existing database system used by my school
+##### Communication
+The Blazor front-end communicates with the REST API through various HTTP requests. 
+
+When requesting data, the majority of the parameters required are stored in the request URL, such as "`/questions/{CategoryID}`". In other cases such as `/verifyUser` where an email containing special characters is involved, the data is sent in a header payload instead.
+
+The data received from the SQL server on the back-end is converted into a class, which is then serialised into a JSON request, which is then deserialised back into the class on the Blazor page to be used programatically.
+
+When writing data, the data is sent as a POST request, which is then converted and handled on the back-end
+##### Data Storage
+All relevant data is stored in the SQL server, or in the case of some of the google authentication data, is stored in the browser's cache. There are a series of SQL requests that directly interface with the SQL server in the back-end program, that handle the reading and writing of data. 
+
+#### Folder and File structure
+- NEA Website
+	- Authentication
+		- `AccessDenied.razor`
+		- `AfterLoginpage.razor`
+		- `AppConstants.cs`
+		- `LoginPage.razor`
+		- `LogoutPage.razor`
+	- Components
+		- Layout
+			- `MainLayout.razor`
+			- `MainLayout.razor.css`
+			- `NavMenu.razor`
+			- `Navmenu.razor.css`
+		- Pages
+			- `Assignments.razor`
+			- `Categories.razor`
+			- `DisplayQuestion.razor`
+			- `Error.razor`
+			- `Home.razor`
+			- `Questions.razor`
+			- `SubmittedAnswers.razor`
+		- `App.razor`
+		- `Routes.razor`
+		- `_Imports.razor`
+	- Properties
+		- `launchsettings.json`
+	- `Program.cs`
+	- `appsettings.Development.json`
+	- `appsettings.json`
+	- `NEAWebsite.csproj`
+	- `NEAWebsite.sln`
+	- *(all other files will be generated on initial runtime)*
+- NEA API
+	- Program.cs
+	- *(all other files will be generated on initial runtime)*
+#### Key Features and Code Implementation
+##### Back-end API (Program.cs) - Data access and Core Functionality
+###### Purpose and Overview
+- The `Program.cs` file in the back-end API acts as the **main entry point** for handling HTTP requests from the Blazor front-end. It defines all the **endpoints** that the front-end interacts with, performing CRUD operations on the SQL database. These endpoints are responsible for fetching questions, submitting answers, handling user authentication, and managing assignments.
+- The API uses **minimal API architecture** provided by ASP.NET Core, and it connects to a SQL Server database using `SqlConnection` and `SqlCommand`. All routes are exposed via HTTP and tested with Swagger (enabled in development mode).
+###### Establishing the Database Connection
+
+```csharp
+SqlConnectionStringBuilder sqlBuilder = new SqlConnectionStringBuilder();
+sqlBuilder.DataSource = "SQL SERVER HERE"; 
+sqlBuilder.UserID = "SQL USERNAME HERE";            
+sqlBuilder.Password = "SQL PASSWORD HERE";     
+sqlBuilder.InitialCatalog = "INITIAL CATALOG HERE";
+sqlBuilder.TrustServerCertificate=true;
+
+using SqlConnection connection = new SqlConnection(sqlBuilder.ConnectionString);
+```
+
+- An `SqlConnectionStringBuilder` is used to build a connection string
+	- The database used is specified in the builder, as well as the username and password
+	- `TrustServerCertificate=true` ensures that the connection doesn't fail due to an untrusted certificate in a development environment
+- The connection is reused across all endpoints, and is opened and closed per request to avoid connection leaks
+- In a production version, the password would ideally be stored in an environment variable or secure secrets store
+###### Get Categories
+
+```csharp
+app.MapGet("/categories", () => {
+    connection.Open();       
+    String sql = "SELECT ID, name, shortname FROM dbo.QCategory";
+    ...
+    return categoryList;    
+})
+```
+
+- This endpoint retrieves all question categories from the `QCategory` table, returning the list of `categoryClass` objects. This supports the front-end feature allowing the users to filter the questions by category
+###### Get Questions (with Optional Filtering)#
+
+```csharp
+app.MapGet("/questions/{categoryID}", (int categoryID) => {
+    ...
+    if(categoryID != 0){
+        sql = $"SELECT ... FROM dbo.Questions q JOIN dbo.QCLink qc ON q.ID = qc.questionID WHERE qc.categoryID = {categoryID}";
+    } else {
+        sql = $"SELECT ... FROM dbo.Questions";
+    }
+    ...
+    return questionList;    
+})
+```
+
+- If a categoryID is provided, questions are filtered using a join on a linking table `QCLink`
+- Otherwise, it returns all questions
+- This dynamic filtering supports the front-end category filtering feature
+
+###### Get Specific Question
+
+```csharp
+app.MapGet("/questions/{categoryID}/{questionID}", ...)
+```
+
+- Returns a specific question by its ID
+- Useful for displaying detailed question data when a student selects a question from one of the pages
+
+###### User Verification
+
+```csharp
+app.MapPost("/verifyuser", (VerifyUserRequest request) =>
+{
+    ...
+    sql = $"SELECT * FROM dbo.[User] WHERE email = '{email}'";
+    ...
+})
+```
+
+- After signing in via Google on the front-end, the user's email is posted here to check if they exist in the database
+- The API returns the user ID if found, otherwise -1 (not found)
+
+###### Create New User
+
+```csharp
+app.MapPost("/createuser", (userClass user) => {
+    ...
+    sql = $"INSERT INTO dbo.[User] (name, email) VALUES ('{user.name}','{user.email}')";
+})
+```
+
+- If a user does not exist in the system, they are added to the database using this endpoint
+- In practice, this endpoint is used to automatically create a new user if they do not already exist in the database
+
+###### Submit Answer
+
+```csharp
+app.MapPost("/submit", (answerClass answer) => {
+    ...
+    sql = $"INSERT INTO dbo.Answers (userID, questionID, content) VALUES (...)";
+    ...
+})
+
+```
+
+- Students submit answers to questions using this endpoint
+- If the answer is related to an assignment, the corresponding entry is deleted from the `Assignments` table to indicate completion
+
+###### Fetch Assignments
+
+```csharp
+app.MapPost("/assignments", (VerifyUserRequest request) => {
+    ...
+    sql = $"SELECT questionID, dueDate FROM dbo.Assignments WHERE userID = {id}";
+    ...
+})
+```
+
+- This feature is for students: it fetches their assignment, calculates the time remaining (`WeeksAway` and `DaysAway`), and returns full question info
+- Useful for visualising assignment deadlines on the website
+
+###### View All Users
+
+```csharp
+app.MapGet("/users", () => {
+    ...
+    String sql = "SELECT ID, name, email, teacher FROM dbo.[User]";
+})
+```
+
+- Returns a list of all users (students and teachers)
+- Teachers can be distinguished by the teacher boolean flag
+
+###### View Answers by User
+
+```csharp
+app.MapGet("/answers/{userID}", (int userID) => {
+    ...
+    sql = $"SELECT a.content, a.userID, a.questionID, q.questionTitle ...";
+})
+```
+
+- Allows students to view their previously submitted answers
+- Teachers can also use this to review answers from any student (based on the front-end)
+
+###### Summary of Technologies Used
+- `Microsoft.AspNetCore.OpenApi` for back-end endpoints
+- MS-SQL Server as the relational database
+- Swagger for API testing during development
+- `Microsoft.Data.SqlClient`for direct SQL query execution
+
+##### Front-end Website
+###### Purpose and Overview
+- The Blazor front-end is designed to create an interactive and dynamic web application for educational content management. It serves two primary user types: students and teachers, each having access to different features based on their roles
+- For students, the platform provides:
+	- A list of available questions to answer
+	- The ability to submit answers for those questions
+	- The ability to view their own previously submitted answers
+	- The ability to view and answer assignments set by teachers
+	- The ability to view the deadline and time remaining for the assignments
+- For teachers, the platform offers:
+	- The ability to view all students' answers with the option to filter by student, and then selecting a question
+
+- The core features of the front-end include:
+	- Authentication and Authorisation: Users authenticate using Google OAuth for secure login, and the app uses role-based authorisation to differentiate between teachers and students
+	- Question and Answer Handling: The app allows students to view and answer questions, while the teachers can see all answers submitted by students.
+	- Assignments: Teachers can set students assignments using the SQL database, which students can then view and answer accordingly
+
+- The app is built using Blazor Server-Side Components and Razor Components, leveraging HTTP Client to interact with the back-end API. Both students and teachers have access to the tools they need according to their specific roles
+- By using streaming rendering and dynamic content loading, it enables efficient, real-time updates on the UI without needing full page reloads. This makes the app feel more responsive and interactive, which is complementary for a modern web application focused on education
+
+###### Features Breakdown
+1. Authentication (Google OAuth and Cookie-based Authentication)
+	- File(s): `Program.cs`, `Authentication/` 
+	- Feature Description:
+		- The application allows users to authenticate via Google Oauth
+		- This is handled in `Progran.cs` where google authentication is set up using a client ID and secret
+		- In `Home.razor`, the user is prompted to login. On login, the user is redirected to the assignments page. If they navigate back to the home page, their user info is displayed
+
+		   ```csharp
+			builder.Services.AddAuthentication(AppConstants.AuthScheme)
+			    .AddCookie(AppConstants.AuthScheme, cookieOptions =>
+			    {
+			        cookieOptions.Cookie.Name = AppConstants.AuthScheme;
+			    }).AddGoogle(GoogleDefaults.AuthenticationScheme, googleOptions =>
+			    {
+			        googleOptions.ClientId = "<Google_Client_Id>";
+			        googleOptions.ClientSecret = "<Google_Client_Secret>";
+			    });
+			
+			```
+
+			```razor
+			<Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+				<NotAuthorized>
+					Please login to view and answer questions
+				</NotAuthorized>
+				<Authorized>
+					<h1>You are authenticated!</h1>
+					<ul>
+						<li>ID: @context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)!.Value</li>
+						<li>Email: @context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)!.Value</li>
+						<li>Name: @context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.GivenName)!.Value</li>
+					</ul>
+				</Authorized>
+			</Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+			```
+
+2. Display Questions and Answers
+	- File(s): `Categories.razor`, `Questions.razor`, `DisplayQuestions.razor`, `SubmittedAnswers.razor`
+	- Feature Description:
+		- Categories: `Categories.razor` fetches and displays a list of categories from the back-end API, and allows the user to select one. If they select a category, then they will be redirected to the questions page with a filter applied
+		- Questions: `Questions.razor` fetches and displays a list of categories from the back-end API, and allows the user to select a specific question to view in greater detail and/or answer
+		- Display Question: `DisplayQuestions.razor` displays detailed information for a specific question, including the question's title, text, and any associated code or other data. Users can submit their answers on this page
+		- Answers: `SubmittedAnswers.razor` displays one or more drop-down menu(s) that can be used to specify a previously submitted answer. A teacher is able to select from any user, while a user can only select their own answers
+		- Questions List
+			```razor
+			@foreach (questionClass question in questionList)
+			{
+			    <tr>
+			        <td>@question.questionID</td>
+			        <td><a href="/questions/@CategoryID/@question.questionID">@question.questionTitle</a></td>
+			        <td>@question.questionText.Replace("\"\"","\"")</td>
+			    </tr>
+			}
+			```
+		- Display Question
+			```razor
+			<h2>@((MarkupString)@question.questionTitle.Replace("\"\"","\""))</h2>
+			<h4>Question Text</h4>
+			<p>@((MarkupString)@question.questionText.Replace("\"\"","\""))</p>
+			```
+
+3. Answer Submission
+	- File: `DisplayQuestions.razor`
+	- Feature Description:
+		- This page allows the user to submit their answers, it includes form inputs for the user's answer and email, which are submitted to the server
+		- Upon submission, the answer is sent to a back-end API endpoint for saving for future retrieval
+			```razor
+			<textarea class="form-control" rows="20" @bind="@answer" disabled="@IsDisabled"></textarea>
+			<button class="btn btn-success" @onclick="Submit" disabled="@IsDisabled">Submit</button>
+			```
+			```csharp
+			void Submit()
+			{
+			    // Submitting the answer logic here, too long for snippet...
+			}
+			```
+
+4. Role-based User Interface (Student/Teacher)
+	- `SubmittedAnswers.razor`
+	- Feature Description:
+		- Teacher Role: Teachers can select a user and view all answers submitted by them. This feature uses a set of drop-down menus to select the users and displays answers for that user
+		- Student Role: Students can only view their own answers, and therefore only have one dropdown for their own answers
+		- Depending on their role (determined from authentication claims), users are presented with different interface options and functionality
+			```razor
+			@if (isTeacher)
+			{
+			    <div>
+			        <label for="userDropdown">Select a user:</label>
+			        <select id="userDropdown" @onchange="OnUserChanged">
+			            <option value="" disabled selected>Select a user</option>
+			            @foreach (var user in userList)
+			            {
+			                <option value="@user.id">@user.name</option>
+			            }
+			        </select>
+			    </div>
+			}
+			else
+			{
+			    <p>You are a student. Your ID: @currentUserId</p>
+			}
+			```
+			```razor
+			var selectedAnswers = userAnswers.Where(a => a.questionID == selectedAnswerId).ToList();
+			@foreach (var answer in selectedAnswers)
+			{
+			    <div>
+			        <p><strong>Answer ID: @answer.questionID</strong></p>
+			        <pre>@((MarkupString)FormatAnswer(answer.content))</pre>
+			    </div>
+			}
+			
+			```
+###### Technologies & Techniques Used
+- Blazor WebAssembly & Blazor Server for the front-end framework. This app uses the Interactive Server Rendering
+- Razor Syntax is used for creating dynamic HTML content with C#
+- Google OAuth is used for user authentication and cookie-based session management
+- HttpClient is used to make API request for fetching data from the database. The data is returned in JSON format and is deserialised into C# objects
+- Role-based Authorisation is used so the UI adjusts based on whether the user is a teacher or a student, leveraging the claims in the authentication token to determine roles
+- Standard HTML form elements such as `<select>`, `<input>`, and `<textarea>` to gather user input
+- Dependency Injection is used to ensure services such as `HttpClient`, `IHttpContextAccessor` and `AuthenticationStateProvider` are injected into components
+- Streaming and Interactive Rendering allows for real-time updates on the server-side without reloading the page, making the app more dynamic
+- State management is used to ensure the UI updates correctly after data fetching and user interaction
+
 #### SQL Design
 ##### Create Table Scripts
 Answers
