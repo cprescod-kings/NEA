@@ -150,7 +150,7 @@ erDiagram
 	Answers ||--|| Questions : For
 	User ||--|| GoogleAcc : Has
 ```
-### Technical Design
+## Technical Design
 #### Technologies Used
 
 | Name                                                       | Description                                     |
@@ -648,7 +648,7 @@ Function FormatAnswer(input):
     - Replace newline characters with "<br />" for proper HTML display.
 ```
 
-### Technical Solution
+## Technical Solution
 #### Installation instructions & Source Code
 Due to the private nature of the GitHub repository, the source code is shared via a platform called [wirps](https://wirps.com/).
 
@@ -1152,8 +1152,4 @@ CREATE TABLE [dbo].[User](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-```
-##### SELECT Scripts
-```SQL
-FROM
 ```

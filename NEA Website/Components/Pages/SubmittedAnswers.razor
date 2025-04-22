@@ -16,7 +16,7 @@
     <div>
         <label for="userDropdown">Select a user:</label>
         <select id="userDropdown" @onchange="OnUserChanged">
-            <option value="" disabled  selected>Select a user</option>
+            <option value="" disabled selected>Select a user</option>
             @foreach (var user in userList)
             {
                 <option value="@user.id">@user.name</option>
@@ -33,8 +33,8 @@ else
 {
     <div>
         <label for="answerDropdown">Select a question:</label>
-        <select id="answerDropdown" @onchange="OnQuestionChanged">
-            <option value="" disabled selected>Select a question</option>
+        <select id="answerDropdown" @bind="SelectedAnswerId">
+            <option value="0" disabled>Select a question</option>
             @foreach (var questionGroup in userAnswers.GroupBy(a => a.questionID))
             {
                 <option value="@questionGroup.Key">@questionGroup.First().questionTitle</option>
@@ -43,12 +43,12 @@ else
     </div>
 }
 
-@if (selectedAnswerId != 0 && selectedQuestion != null)
+@if (SelectedAnswerId != 0 && selectedQuestion != null)
 {
     <h3>Question: @selectedQuestion.questionTitle</h3>
     <p>@selectedQuestion.questionText</p>
     <h4>Answers:</h4>
-    var selectedAnswers = userAnswers.Where(a => a.questionID == selectedAnswerId).ToList();
+    var selectedAnswers = userAnswers.Where(a => a.questionID == SelectedAnswerId).ToList();
     @foreach (var answer in selectedAnswers)
     {
         <div>
@@ -59,20 +59,32 @@ else
 }
 
 @code {
-    private List<enhancedUserClass> userList = new List<enhancedUserClass>();
-    private List<returnAnswerClass> userAnswers = new List<returnAnswerClass>();
-    private int selectedUserId = 0;  // User selected from the first dropdown
-    private int selectedAnswerId = 0;  // Answer selected from the second dropdown
-    private int selectedQuestionId = 0;  // Store the selected question ID
-    private questionClass selectedQuestion = null;  // Store the selected question
+    private List<enhancedUserClass> userList = new();
+    private List<returnAnswerClass> userAnswers = new();
+    private int selectedUserId = 0;
+    private int selectedAnswerId = 0;
+    private int currentUserId;
+    private questionClass selectedQuestion = null;
     private string name = string.Empty;
     private string email = string.Empty;
     private bool isTeacher;
-    private int currentUserId;  // Store the current user's ID
 
-    protected async override Task OnInitializedAsync()
+    // Property for two-way binding with answer dropdown
+    private int SelectedAnswerId
     {
-        // Get current user claims
+        get => selectedAnswerId;
+        set
+        {
+            if (selectedAnswerId != value)
+            {
+                selectedAnswerId = value;
+                _ = LoadQuestionDetails(selectedAnswerId); // Async call
+            }
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
         var userClaims = HttpContextAccessor.HttpContext?.User?.Claims;
         if (userClaims != null)
         {
@@ -81,6 +93,7 @@ else
             {
                 email = emailClaim.Value;
             }
+
             var nameClaim = userClaims.FirstOrDefault(c => c.Type == ClaimTypes.GivenName);
             if (nameClaim != null)
             {
@@ -88,48 +101,42 @@ else
             }
         }
 
-        // Fetch the user list
         userList = await Http.GetFromJsonAsync<List<enhancedUserClass>>("/users");
 
-        // Check if the current user is a teacher
         var currentUser = userList.FirstOrDefault(u => u.email == email);
         if (currentUser != null)
         {
-            isTeacher = currentUser.teacher; // Set flag if current user is a teacher
-            currentUserId = currentUser.id; // Set current user's ID
+            isTeacher = currentUser.teacher;
+            currentUserId = currentUser.id;
         }
 
         if (!isTeacher)
         {
-            // Fetch the answers for the current student if the user is a student
             userAnswers = await Http.GetFromJsonAsync<List<returnAnswerClass>>($"/answers/{currentUserId}");
-            StateHasChanged(); // Trigger re-render
+            StateHasChanged();
         }
     }
 
-    // Handle user change event and fetch their answers (for teachers)
     private async Task OnUserChanged(ChangeEventArgs e)
     {
-        selectedUserId = int.Parse(e.Value.ToString());  // Get selected user ID from the event
+        selectedUserId = int.Parse(e.Value?.ToString() ?? "0");
+
         if (selectedUserId != 0)
         {
-            // Fetch the answers for the selected user
+            SelectedAnswerId = 0; // Reset dropdown
+            selectedQuestion = null;
+
             userAnswers = await Http.GetFromJsonAsync<List<returnAnswerClass>>($"/answers/{selectedUserId}");
-            selectedAnswerId = 0; // Reset the second dropdown when user changes
-            selectedQuestion = null; // Reset selected question when user changes
-            StateHasChanged(); // Manually trigger re-rendering
+            StateHasChanged();
         }
     }
 
-    // Handle question change event and fetch the question details
-    private async Task OnQuestionChanged(ChangeEventArgs e)
+    private async Task LoadQuestionDetails(int questionId)
     {
-        selectedAnswerId = int.Parse(e.Value.ToString());  // Get selected question ID from the event
-        if (selectedAnswerId != 0)
+        if (questionId != 0)
         {
-            // Fetch the question details based on CategoryID and selected QuestionID
-            selectedQuestion = await Http.GetFromJsonAsync<questionClass>($"/questions/0/{selectedAnswerId}");
-            StateHasChanged(); // Manually trigger re-rendering
+            selectedQuestion = await Http.GetFromJsonAsync<questionClass>($"/questions/0/{questionId}");
+            StateHasChanged();
         }
     }
 
@@ -138,7 +145,6 @@ else
         return input.Replace("\n", "<br />");
     }
 
-    // Class definitions for User, Answer, Question, and Answer Return
     class enhancedUserClass
     {
         public string name { get; set; }
