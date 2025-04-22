@@ -1,4 +1,0 @@
-SELECT temp_question_category.question_id, QCategory.ID, temp_question_category.category_shorthand, QCategory.shortname
-from temp_question_category
-JOIN QCategory
-ON temp_question_category.category_shorthand = QCategory.shortname;

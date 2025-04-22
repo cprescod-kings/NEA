@@ -1,0 +1,10 @@
+ID,name,shortname
+1,Input/Output,IO
+2,Selection,SEL
+3,String Handling,STR
+4,Numeric Handling,NUM
+5,Iteration,ITE
+6,Lists,LST
+7,Subroutines,SR
+8,File Handling,FIL
+9,Complex,COM

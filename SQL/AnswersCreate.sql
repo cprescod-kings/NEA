@@ -1,0 +1,25 @@
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Answers](
+	[userID] [int] NULL,
+	[answerID] [int] IDENTITY(1,1) NOT NULL,
+	[questionID] [int] NULL,
+	[content] [nvarchar](max) NULL,
+ CONSTRAINT [PK_Answers] PRIMARY KEY CLUSTERED 
+(
+	[answerID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[Answers]  WITH CHECK ADD  CONSTRAINT [FK_Answers_Questions] FOREIGN KEY([questionID])
+REFERENCES [dbo].[Questions] ([ID])
+GO
+ALTER TABLE [dbo].[Answers] CHECK CONSTRAINT [FK_Answers_Questions]
+GO
+ALTER TABLE [dbo].[Answers]  WITH CHECK ADD  CONSTRAINT [FK_Answers_User] FOREIGN KEY([userID])
+REFERENCES [dbo].[User] ([ID])
+GO
+ALTER TABLE [dbo].[Answers] CHECK CONSTRAINT [FK_Answers_User]
+GO
